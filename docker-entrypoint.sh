@@ -10,8 +10,8 @@ php artisan cache:clear
 php artisan route:clear
 php artisan view:clear
 
-# Fresh migrate với seed (xóa toàn bộ và tạo lại)
-php artisan migrate:fresh --seed --force || echo "Migration failed, continuing..."
+# Run migrations only (không xóa dữ liệu)
+php artisan migrate --force || echo "Migration failed, continuing..."
 
 # Start Apache
 apache2-foreground

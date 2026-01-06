@@ -7,19 +7,19 @@
 
 @section('content')
 <div class="filter-row">
-    <select id="filterCategory" class="form-select">
+    <select id="filterCategory" class="form-select" style="min-width:180px;">
         <option value="">Tất cả danh mục</option>
         @foreach($categories as $cat)
         <option value="{{ $cat->name }}">{{ $cat->name }}</option>
         @endforeach
     </select>
-    <select id="filterSupplier" class="form-select">
+    <select id="filterSupplier" class="form-select" style="min-width:220px;">
         <option value="">Tất cả NCC</option>
         @foreach($suppliers as $sup)
         <option value="{{ $sup->name }}">{{ $sup->name }}</option>
         @endforeach
     </select>
-    <input type="text" id="searchInput" class="form-control" placeholder="Tìm kiếm..." style="max-width:200px;">
+    <input type="text" id="searchInput" class="form-control" placeholder="Tìm kiếm..." style="max-width:180px;">
     <button class="btn btn-outline-secondary" onclick="resetFilters()" title="Reset bộ lọc">
         <i class="bi bi-arrow-counterclockwise"></i>
     </button>

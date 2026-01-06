@@ -56,6 +56,12 @@
     <button class="btn btn-outline-secondary" onclick="resetFilters()" title="Reset bộ lọc">
         <i class="bi bi-arrow-counterclockwise"></i>
     </button>
+    <a href="{{ route('inventory.export.excel') }}" class="btn btn-success" title="Xuất Excel">
+        <i class="bi bi-file-earmark-excel"></i>
+    </a>
+    <a href="{{ route('inventory.export.pdf') }}" class="btn btn-danger" title="Xuất PDF">
+        <i class="bi bi-file-earmark-pdf"></i>
+    </a>
 </div>
 
 <div class="card">

@@ -20,7 +20,7 @@ services:
       - key: APP_DEBUG
         value: "false"
       - key: APP_KEY
-        generateValue: true
+        value: base64:JHK8d9fKL3mN2pQ5rT7vX9zA1cE3gI5kM7oQ9sU1wY4=
       - key: DB_CONNECTION
         value: pgsql
       - key: DATABASE_URL

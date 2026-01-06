@@ -25,7 +25,7 @@
             <table class="table table-hover data-table mb-0">
                 <thead>
                     <tr>
-                        <th width="50">ID</th>
+                        <th width="50">STT</th>
                         <th>Họ tên</th>
                         <th>Email</th>
                         <th>Vai trò</th>
@@ -38,9 +38,9 @@
                     $roles = ['admin' => 'Quản trị viên', 'warehouse_keeper' => 'Thủ kho', 'sales' => 'Nhân viên KD'];
                     $roleClass = ['admin' => 'bg-danger', 'warehouse_keeper' => 'bg-primary', 'sales' => 'bg-success'];
                     @endphp
-                    @foreach($users as $user)
+                    @foreach($users as $index => $user)
                     <tr>
-                        <td>{{ $user->id }}</td>
+                        <td>{{ $index + 1 }}</td>
                         <td><strong>{{ $user->name }}</strong></td>
                         <td>{{ $user->email }}</td>
                         <td><span class="badge {{ $roleClass[$user->role] ?? 'bg-secondary' }}">{{ $roles[$user->role] ?? $user->role }}</span></td>

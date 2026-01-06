@@ -19,7 +19,7 @@
             <table class="table table-hover data-table mb-0">
                 <thead>
                     <tr>
-                        <th width="60">ID</th>
+                        <th width="60">STT</th>
                         <th>Tên danh mục</th>
                         <th>Mô tả</th>
                         <th width="80">Số SP</th>
@@ -27,9 +27,9 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach($categories as $cat)
+                    @foreach($categories as $index => $cat)
                     <tr>
-                        <td>{{ $cat->id }}</td>
+                        <td>{{ $index + 1 }}</td>
                         <td><strong>{{ $cat->name }}</strong></td>
                         <td>{{ $cat->description }}</td>
                         <td><span class="badge bg-primary">{{ $cat->products_count }}</span></td>

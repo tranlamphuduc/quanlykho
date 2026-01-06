@@ -55,6 +55,7 @@
             <table class="table table-hover data-table mb-0">
                 <thead>
                     <tr>
+                        <th width="50">STT</th>
                         <th>Mã SP</th>
                         <th>Tên sản phẩm</th>
                         <th>Danh mục</th>
@@ -65,7 +66,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach($inventory as $item)
+                    @foreach($inventory as $index => $item)
                     @php
                         $statusText = 'Bình thường';
                         $statusClass = 'bg-success';
@@ -78,6 +79,7 @@
                         }
                     @endphp
                     <tr>
+                        <td>{{ $index + 1 }}</td>
                         <td><code>{{ $item->product->code }}</code></td>
                         <td>{{ $item->product->name }}</td>
                         <td>{{ $item->product->category->name ?? '-' }}</td>

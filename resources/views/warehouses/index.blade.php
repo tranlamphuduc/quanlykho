@@ -19,7 +19,7 @@
             <table class="table table-hover data-table mb-0">
                 <thead>
                     <tr>
-                        <th width="50">ID</th>
+                        <th width="50">STT</th>
                         <th>Tên kho</th>
                         <th>Địa chỉ</th>
                         <th>Người quản lý</th>
@@ -27,9 +27,9 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach($warehouses as $wh)
+                    @foreach($warehouses as $index => $wh)
                     <tr>
-                        <td>{{ $wh->id }}</td>
+                        <td>{{ $index + 1 }}</td>
                         <td><strong>{{ $wh->name }}</strong></td>
                         <td>{{ $wh->address }}</td>
                         <td>{{ $wh->manager->name ?? '-' }}</td>

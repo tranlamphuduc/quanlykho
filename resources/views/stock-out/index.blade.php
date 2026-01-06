@@ -25,6 +25,7 @@
             <table class="table table-hover data-table mb-0">
                 <thead>
                     <tr>
+                        <th width="50">STT</th>
                         <th>Mã phiếu</th>
                         <th>Kho</th>
                         <th>Khách hàng</th>
@@ -35,8 +36,9 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach($stockOuts as $so)
+                    @foreach($stockOuts as $index => $so)
                     <tr>
+                        <td>{{ $index + 1 }}</td>
                         <td><code>{{ $so->code }}</code></td>
                         <td>{{ $so->warehouse->name }}</td>
                         <td>{{ $so->customer_name ?? '-' }}</td>

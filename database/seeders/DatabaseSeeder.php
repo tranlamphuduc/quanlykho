@@ -18,17 +18,10 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
-        // Xóa hết dữ liệu cũ (theo thứ tự để tránh lỗi foreign key)
-        \DB::table('stock_out_details')->delete();
-        \DB::table('stock_in_details')->delete();
-        \DB::table('stock_outs')->delete();
-        \DB::table('stock_ins')->delete();
-        \DB::table('inventory')->delete();
-        \DB::table('products')->delete();
-        \DB::table('categories')->delete();
-        \DB::table('suppliers')->delete();
-        \DB::table('warehouses')->delete();
-        \DB::table('users')->delete();
+        // Chỉ seed nếu chưa có dữ liệu
+        if (User::count() > 0) {
+            return;
+        }
 
         // Users - sử dụng firstOrCreate để tránh lỗi duplicate
         $admin = User::firstOrCreate(
@@ -72,30 +65,20 @@ class DatabaseSeeder extends Seeder
         );
 
         // Categories - Danh mục đồ gia dụng
-        $categories = [
-            ['name' => 'Đồ điện gia dụng', 'description' => 'Thiết bị điện tử như quạt, máy sấy, nồi cơm điện'],
-            ['name' => 'Đồ dùng nhà bếp', 'description' => 'Nồi, chảo, dao, thớt, dụng cụ nấu ăn'],
-            ['name' => 'Đồ vệ sinh', 'description' => 'Nước giặt, nước rửa chén, chổi, cây lau nhà'],
-            ['name' => 'Đồ nội thất', 'description' => 'Bàn ghế, kệ, tủ nhỏ'],
-            ['name' => 'Đồ trang trí', 'description' => 'Đèn trang trí, khung ảnh, bình hoa'],
-            ['name' => 'Đồ phòng ngủ', 'description' => 'Chăn, ga, gối, nệm'],
-            ['name' => 'Đồ phòng tắm', 'description' => 'Vòi sen, kệ phòng tắm, rèm tắm'],
-        ];
-        foreach ($categories as $cat) {
-            Category::firstOrCreate(['name' => $cat['name']], $cat);
-        }
+        $catDienGiaDung = Category::firstOrCreate(['name' => 'Đồ điện gia dụng'], ['description' => 'Thiết bị điện tử như quạt, máy sấy, nồi cơm điện']);
+        $catNhaBep = Category::firstOrCreate(['name' => 'Đồ dùng nhà bếp'], ['description' => 'Nồi, chảo, dao, thớt, dụng cụ nấu ăn']);
+        $catVeSinh = Category::firstOrCreate(['name' => 'Đồ vệ sinh'], ['description' => 'Nước giặt, nước rửa chén, chổi, cây lau nhà']);
+        $catNoiThat = Category::firstOrCreate(['name' => 'Đồ nội thất'], ['description' => 'Bàn ghế, kệ, tủ nhỏ']);
+        Category::firstOrCreate(['name' => 'Đồ trang trí'], ['description' => 'Đèn trang trí, khung ảnh, bình hoa']);
+        Category::firstOrCreate(['name' => 'Đồ phòng ngủ'], ['description' => 'Chăn, ga, gối, nệm']);
+        Category::firstOrCreate(['name' => 'Đồ phòng tắm'], ['description' => 'Vòi sen, kệ phòng tắm, rèm tắm']);
 
         // Suppliers - Nhà cung cấp
-        $suppliers = [
-            ['name' => 'Công ty TNHH Điện máy Sunhouse', 'phone' => '0901234567', 'email' => 'sunhouse@supplier.com', 'address' => '123 Nguyễn Văn Linh, Q7, TP.HCM'],
-            ['name' => 'Nhà phân phối Kangaroo', 'phone' => '0912345678', 'email' => 'kangaroo@supplier.com', 'address' => '456 Lê Văn Việt, Q9, TP.HCM'],
-            ['name' => 'Công ty CP Lock&Lock Việt Nam', 'phone' => '0923456789', 'email' => 'locklock@supplier.com', 'address' => '789 Điện Biên Phủ, Q3, TP.HCM'],
-            ['name' => 'Đại lý Unilever', 'phone' => '0934567890', 'email' => 'unilever@supplier.com', 'address' => '321 Võ Văn Tần, Q3, TP.HCM'],
-            ['name' => 'Công ty TNHH Happycook', 'phone' => '0945678901', 'email' => 'happycook@supplier.com', 'address' => '654 Cách Mạng Tháng 8, Q10, TP.HCM'],
-        ];
-        foreach ($suppliers as $sup) {
-            Supplier::firstOrCreate(['email' => $sup['email']], $sup);
-        }
+        $supSunhouse = Supplier::firstOrCreate(['email' => 'sunhouse@supplier.com'], ['name' => 'Công ty TNHH Điện máy Sunhouse', 'phone' => '0901234567', 'address' => '123 Nguyễn Văn Linh, Q7, TP.HCM']);
+        $supKangaroo = Supplier::firstOrCreate(['email' => 'kangaroo@supplier.com'], ['name' => 'Nhà phân phối Kangaroo', 'phone' => '0912345678', 'address' => '456 Lê Văn Việt, Q9, TP.HCM']);
+        $supLockLock = Supplier::firstOrCreate(['email' => 'locklock@supplier.com'], ['name' => 'Công ty CP Lock&Lock Việt Nam', 'phone' => '0923456789', 'address' => '789 Điện Biên Phủ, Q3, TP.HCM']);
+        $supUnilever = Supplier::firstOrCreate(['email' => 'unilever@supplier.com'], ['name' => 'Đại lý Unilever', 'phone' => '0934567890', 'address' => '321 Võ Văn Tần, Q3, TP.HCM']);
+        $supHappycook = Supplier::firstOrCreate(['email' => 'happycook@supplier.com'], ['name' => 'Công ty TNHH Happycook', 'phone' => '0945678901', 'address' => '654 Cách Mạng Tháng 8, Q10, TP.HCM']);
 
         // Warehouses - Kho hàng
         $warehouse1 = Warehouse::create([
@@ -110,35 +93,35 @@ class DatabaseSeeder extends Seeder
             'manager_id' => $keeper2->id,
         ]);
 
-        // Products - Sản phẩm đồ gia dụng
+        // Products - Sản phẩm đồ gia dụng (dùng ID thực tế)
         $products = [
-            // Đồ điện gia dụng (category_id = 1)
-            ['code' => 'SP000001', 'name' => 'Quạt điện Sunhouse SHD7624', 'category_id' => 1, 'supplier_id' => 1, 'unit' => 'Cái', 'cost_price' => 450000, 'sell_price' => 550000, 'min_stock' => 10, 'max_stock' => 100],
-            ['code' => 'SP000002', 'name' => 'Nồi cơm điện Sunhouse 1.8L', 'category_id' => 1, 'supplier_id' => 1, 'unit' => 'Cái', 'cost_price' => 650000, 'sell_price' => 790000, 'min_stock' => 5, 'max_stock' => 50],
-            ['code' => 'SP000003', 'name' => 'Máy xay sinh tố Sunhouse SHD5321', 'category_id' => 1, 'supplier_id' => 1, 'unit' => 'Cái', 'cost_price' => 380000, 'sell_price' => 450000, 'min_stock' => 8, 'max_stock' => 60],
-            ['code' => 'SP000004', 'name' => 'Bàn ủi hơi nước Sunhouse SHD2065', 'category_id' => 1, 'supplier_id' => 1, 'unit' => 'Cái', 'cost_price' => 290000, 'sell_price' => 350000, 'min_stock' => 10, 'max_stock' => 80],
-            ['code' => 'SP000005', 'name' => 'Máy lọc nước Kangaroo KG104', 'category_id' => 1, 'supplier_id' => 2, 'unit' => 'Cái', 'cost_price' => 4500000, 'sell_price' => 5200000, 'min_stock' => 3, 'max_stock' => 20],
-            ['code' => 'SP000006', 'name' => 'Bình nước nóng Kangaroo 20L', 'category_id' => 1, 'supplier_id' => 2, 'unit' => 'Cái', 'cost_price' => 2100000, 'sell_price' => 2500000, 'min_stock' => 5, 'max_stock' => 30],
+            // Đồ điện gia dụng
+            ['code' => 'SP000001', 'name' => 'Quạt điện Sunhouse SHD7624', 'category_id' => $catDienGiaDung->id, 'supplier_id' => $supSunhouse->id, 'unit' => 'Cái', 'cost_price' => 450000, 'sell_price' => 550000, 'min_stock' => 10, 'max_stock' => 100],
+            ['code' => 'SP000002', 'name' => 'Nồi cơm điện Sunhouse 1.8L', 'category_id' => $catDienGiaDung->id, 'supplier_id' => $supSunhouse->id, 'unit' => 'Cái', 'cost_price' => 650000, 'sell_price' => 790000, 'min_stock' => 5, 'max_stock' => 50],
+            ['code' => 'SP000003', 'name' => 'Máy xay sinh tố Sunhouse SHD5321', 'category_id' => $catDienGiaDung->id, 'supplier_id' => $supSunhouse->id, 'unit' => 'Cái', 'cost_price' => 380000, 'sell_price' => 450000, 'min_stock' => 8, 'max_stock' => 60],
+            ['code' => 'SP000004', 'name' => 'Bàn ủi hơi nước Sunhouse SHD2065', 'category_id' => $catDienGiaDung->id, 'supplier_id' => $supSunhouse->id, 'unit' => 'Cái', 'cost_price' => 290000, 'sell_price' => 350000, 'min_stock' => 10, 'max_stock' => 80],
+            ['code' => 'SP000005', 'name' => 'Máy lọc nước Kangaroo KG104', 'category_id' => $catDienGiaDung->id, 'supplier_id' => $supKangaroo->id, 'unit' => 'Cái', 'cost_price' => 4500000, 'sell_price' => 5200000, 'min_stock' => 3, 'max_stock' => 20],
+            ['code' => 'SP000006', 'name' => 'Bình nước nóng Kangaroo 20L', 'category_id' => $catDienGiaDung->id, 'supplier_id' => $supKangaroo->id, 'unit' => 'Cái', 'cost_price' => 2100000, 'sell_price' => 2500000, 'min_stock' => 5, 'max_stock' => 30],
             
-            // Đồ dùng nhà bếp (category_id = 2)
-            ['code' => 'SP000007', 'name' => 'Bộ nồi inox 5 đáy Sunhouse', 'category_id' => 2, 'supplier_id' => 1, 'unit' => 'Bộ', 'cost_price' => 890000, 'sell_price' => 1050000, 'min_stock' => 5, 'max_stock' => 40],
-            ['code' => 'SP000008', 'name' => 'Chảo chống dính Happycook 26cm', 'category_id' => 2, 'supplier_id' => 5, 'unit' => 'Cái', 'cost_price' => 180000, 'sell_price' => 220000, 'min_stock' => 15, 'max_stock' => 100],
-            ['code' => 'SP000009', 'name' => 'Bộ dao 6 món Sunhouse', 'category_id' => 2, 'supplier_id' => 1, 'unit' => 'Bộ', 'cost_price' => 320000, 'sell_price' => 390000, 'min_stock' => 10, 'max_stock' => 60],
-            ['code' => 'SP000010', 'name' => 'Hộp đựng thực phẩm Lock&Lock 3 cái', 'category_id' => 2, 'supplier_id' => 3, 'unit' => 'Bộ', 'cost_price' => 150000, 'sell_price' => 189000, 'min_stock' => 20, 'max_stock' => 150],
-            ['code' => 'SP000011', 'name' => 'Bình giữ nhiệt Lock&Lock 500ml', 'category_id' => 2, 'supplier_id' => 3, 'unit' => 'Cái', 'cost_price' => 280000, 'sell_price' => 350000, 'min_stock' => 15, 'max_stock' => 100],
-            ['code' => 'SP000012', 'name' => 'Thớt gỗ cao cấp 30x40cm', 'category_id' => 2, 'supplier_id' => 5, 'unit' => 'Cái', 'cost_price' => 85000, 'sell_price' => 120000, 'min_stock' => 20, 'max_stock' => 120],
+            // Đồ dùng nhà bếp
+            ['code' => 'SP000007', 'name' => 'Bộ nồi inox 5 đáy Sunhouse', 'category_id' => $catNhaBep->id, 'supplier_id' => $supSunhouse->id, 'unit' => 'Bộ', 'cost_price' => 890000, 'sell_price' => 1050000, 'min_stock' => 5, 'max_stock' => 40],
+            ['code' => 'SP000008', 'name' => 'Chảo chống dính Happycook 26cm', 'category_id' => $catNhaBep->id, 'supplier_id' => $supHappycook->id, 'unit' => 'Cái', 'cost_price' => 180000, 'sell_price' => 220000, 'min_stock' => 15, 'max_stock' => 100],
+            ['code' => 'SP000009', 'name' => 'Bộ dao 6 món Sunhouse', 'category_id' => $catNhaBep->id, 'supplier_id' => $supSunhouse->id, 'unit' => 'Bộ', 'cost_price' => 320000, 'sell_price' => 390000, 'min_stock' => 10, 'max_stock' => 60],
+            ['code' => 'SP000010', 'name' => 'Hộp đựng thực phẩm Lock&Lock 3 cái', 'category_id' => $catNhaBep->id, 'supplier_id' => $supLockLock->id, 'unit' => 'Bộ', 'cost_price' => 150000, 'sell_price' => 189000, 'min_stock' => 20, 'max_stock' => 150],
+            ['code' => 'SP000011', 'name' => 'Bình giữ nhiệt Lock&Lock 500ml', 'category_id' => $catNhaBep->id, 'supplier_id' => $supLockLock->id, 'unit' => 'Cái', 'cost_price' => 280000, 'sell_price' => 350000, 'min_stock' => 15, 'max_stock' => 100],
+            ['code' => 'SP000012', 'name' => 'Thớt gỗ cao cấp 30x40cm', 'category_id' => $catNhaBep->id, 'supplier_id' => $supHappycook->id, 'unit' => 'Cái', 'cost_price' => 85000, 'sell_price' => 120000, 'min_stock' => 20, 'max_stock' => 120],
             
-            // Đồ vệ sinh (category_id = 3)
-            ['code' => 'SP000013', 'name' => 'Nước giặt OMO 3.7kg', 'category_id' => 3, 'supplier_id' => 4, 'unit' => 'Chai', 'cost_price' => 145000, 'sell_price' => 175000, 'min_stock' => 30, 'max_stock' => 200],
-            ['code' => 'SP000014', 'name' => 'Nước rửa chén Sunlight 3.6kg', 'category_id' => 3, 'supplier_id' => 4, 'unit' => 'Chai', 'cost_price' => 95000, 'sell_price' => 115000, 'min_stock' => 30, 'max_stock' => 200],
-            ['code' => 'SP000015', 'name' => 'Nước lau sàn Sunlight 3.8kg', 'category_id' => 3, 'supplier_id' => 4, 'unit' => 'Chai', 'cost_price' => 78000, 'sell_price' => 95000, 'min_stock' => 25, 'max_stock' => 150],
-            ['code' => 'SP000016', 'name' => 'Cây lau nhà xoay 360 độ', 'category_id' => 3, 'supplier_id' => 5, 'unit' => 'Bộ', 'cost_price' => 250000, 'sell_price' => 320000, 'min_stock' => 10, 'max_stock' => 60],
-            ['code' => 'SP000017', 'name' => 'Chổi quét nhà cao cấp', 'category_id' => 3, 'supplier_id' => 5, 'unit' => 'Cái', 'cost_price' => 45000, 'sell_price' => 65000, 'min_stock' => 20, 'max_stock' => 100],
+            // Đồ vệ sinh
+            ['code' => 'SP000013', 'name' => 'Nước giặt OMO 3.7kg', 'category_id' => $catVeSinh->id, 'supplier_id' => $supUnilever->id, 'unit' => 'Chai', 'cost_price' => 145000, 'sell_price' => 175000, 'min_stock' => 30, 'max_stock' => 200],
+            ['code' => 'SP000014', 'name' => 'Nước rửa chén Sunlight 3.6kg', 'category_id' => $catVeSinh->id, 'supplier_id' => $supUnilever->id, 'unit' => 'Chai', 'cost_price' => 95000, 'sell_price' => 115000, 'min_stock' => 30, 'max_stock' => 200],
+            ['code' => 'SP000015', 'name' => 'Nước lau sàn Sunlight 3.8kg', 'category_id' => $catVeSinh->id, 'supplier_id' => $supUnilever->id, 'unit' => 'Chai', 'cost_price' => 78000, 'sell_price' => 95000, 'min_stock' => 25, 'max_stock' => 150],
+            ['code' => 'SP000016', 'name' => 'Cây lau nhà xoay 360 độ', 'category_id' => $catVeSinh->id, 'supplier_id' => $supHappycook->id, 'unit' => 'Bộ', 'cost_price' => 250000, 'sell_price' => 320000, 'min_stock' => 10, 'max_stock' => 60],
+            ['code' => 'SP000017', 'name' => 'Chổi quét nhà cao cấp', 'category_id' => $catVeSinh->id, 'supplier_id' => $supHappycook->id, 'unit' => 'Cái', 'cost_price' => 45000, 'sell_price' => 65000, 'min_stock' => 20, 'max_stock' => 100],
             
-            // Đồ nội thất (category_id = 4)
-            ['code' => 'SP000018', 'name' => 'Kệ để giày 5 tầng', 'category_id' => 4, 'supplier_id' => 5, 'unit' => 'Cái', 'cost_price' => 350000, 'sell_price' => 450000, 'min_stock' => 5, 'max_stock' => 30],
-            ['code' => 'SP000019', 'name' => 'Ghế nhựa cao cấp', 'category_id' => 4, 'supplier_id' => 5, 'unit' => 'Cái', 'cost_price' => 120000, 'sell_price' => 160000, 'min_stock' => 15, 'max_stock' => 80],
-            ['code' => 'SP000020', 'name' => 'Tủ nhựa 5 ngăn Duy Tân', 'category_id' => 4, 'supplier_id' => 5, 'unit' => 'Cái', 'cost_price' => 680000, 'sell_price' => 850000, 'min_stock' => 5, 'max_stock' => 25],
+            // Đồ nội thất
+            ['code' => 'SP000018', 'name' => 'Kệ để giày 5 tầng', 'category_id' => $catNoiThat->id, 'supplier_id' => $supHappycook->id, 'unit' => 'Cái', 'cost_price' => 350000, 'sell_price' => 450000, 'min_stock' => 5, 'max_stock' => 30],
+            ['code' => 'SP000019', 'name' => 'Ghế nhựa cao cấp', 'category_id' => $catNoiThat->id, 'supplier_id' => $supHappycook->id, 'unit' => 'Cái', 'cost_price' => 120000, 'sell_price' => 160000, 'min_stock' => 15, 'max_stock' => 80],
+            ['code' => 'SP000020', 'name' => 'Tủ nhựa 5 ngăn Duy Tân', 'category_id' => $catNoiThat->id, 'supplier_id' => $supHappycook->id, 'unit' => 'Cái', 'cost_price' => 680000, 'sell_price' => 850000, 'min_stock' => 5, 'max_stock' => 25],
         ];
 
         foreach ($products as $prod) {
@@ -155,6 +138,7 @@ class DatabaseSeeder extends Seeder
     private function createStockInData($warehouse1, $warehouse2, $keeper1, $keeper2)
     {
         $products = Product::all();
+        $supplierIds = Supplier::pluck('id')->toArray();
         
         // Tạo phiếu nhập cho các tháng trong năm
         for ($month = 1; $month <= 12; $month++) {
@@ -164,7 +148,7 @@ class DatabaseSeeder extends Seeder
             $stockIn1 = StockIn::create([
                 'code' => 'PN' . $date->format('Ymd') . str_pad($month, 4, '0', STR_PAD_LEFT),
                 'warehouse_id' => $warehouse1->id,
-                'supplier_id' => rand(1, 5),
+                'supplier_id' => $supplierIds[array_rand($supplierIds)],
                 'user_id' => $keeper1->id,
                 'total_amount' => 0,
                 'note' => 'Nhập hàng tháng ' . $month,
@@ -199,7 +183,7 @@ class DatabaseSeeder extends Seeder
                 $stockIn2 = StockIn::create([
                     'code' => 'PN' . $date2->format('Ymd') . str_pad($month + 100, 4, '0', STR_PAD_LEFT),
                     'warehouse_id' => $warehouse2->id,
-                    'supplier_id' => rand(1, 5),
+                    'supplier_id' => $supplierIds[array_rand($supplierIds)],
                     'user_id' => $keeper2->id,
                     'total_amount' => 0,
                     'note' => 'Nhập hàng kho 2 tháng ' . $month,

@@ -19,7 +19,7 @@
             <table class="table table-hover data-table mb-0">
                 <thead>
                     <tr>
-                        <th width="50">ID</th>
+                        <th width="50">STT</th>
                         <th>Tên NCC</th>
                         <th>Điện thoại</th>
                         <th>Email</th>
@@ -28,9 +28,9 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach($suppliers as $sup)
+                    @foreach($suppliers as $index => $sup)
                     <tr>
-                        <td>{{ $sup->id }}</td>
+                        <td>{{ $index + 1 }}</td>
                         <td><strong>{{ $sup->name }}</strong></td>
                         <td>{{ $sup->phone }}</td>
                         <td>{{ $sup->email }}</td>

@@ -18,6 +18,11 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
+        // Kiểm tra nếu đã có dữ liệu thì không seed nữa
+        if (User::count() > 0) {
+            return;
+        }
+
         // Users - sử dụng firstOrCreate để tránh lỗi duplicate
         $admin = User::firstOrCreate(
             ['email' => 'admin@warehouse.com'],

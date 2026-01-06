@@ -34,19 +34,28 @@
 </div>
 
 <div class="filter-row">
-    <select name="warehouse_id" class="form-select filter-select" data-column="3">
+    <select id="filterWarehouse" class="form-select">
         <option value="">Tất cả kho</option>
         @foreach($warehouses as $wh)
-        <option value="{{ $wh->id }}">{{ $wh->name }}</option>
+        <option value="{{ $wh->name }}">{{ $wh->name }}</option>
         @endforeach
     </select>
-    <select name="status" class="form-select filter-select">
+    <select id="filterStatus" class="form-select">
         <option value="">Tất cả trạng thái</option>
-        <option value="low">Tồn thấp</option>
-        <option value="normal">Bình thường</option>
-        <option value="over">Tồn cao</option>
+        <option value="Tồn thấp">Tồn thấp</option>
+        <option value="Bình thường">Bình thường</option>
+        <option value="Tồn cao">Tồn cao</option>
     </select>
-    <input type="text" name="search" class="form-control" placeholder="Tìm kiếm..." style="max-width:180px;">
+    <select id="filterCategory" class="form-select">
+        <option value="">Tất cả danh mục</option>
+        @foreach($warehouses->first() ? \App\Models\Category::all() : [] as $cat)
+        <option value="{{ $cat->name }}">{{ $cat->name }}</option>
+        @endforeach
+    </select>
+    <input type="text" id="searchInput" class="form-control" placeholder="Tìm kiếm..." style="max-width:180px;">
+    <button class="btn btn-outline-secondary" onclick="resetFilters()" title="Reset bộ lọc">
+        <i class="bi bi-arrow-counterclockwise"></i>
+    </button>
 </div>
 
 <div class="card">
@@ -95,3 +104,27 @@
     </div>
 </div>
 @endsection
+
+@push('scripts')
+<script>
+$(document).ready(function() {
+    $('#filterWarehouse').on('change', function() {
+        dataTable.column(5).search(this.value).draw();
+    });
+    $('#filterStatus').on('change', function() {
+        dataTable.column(7).search(this.value).draw();
+    });
+    $('#filterCategory').on('change', function() {
+        dataTable.column(4).search(this.value).draw();
+    });
+    $('#searchInput').on('keyup', function() {
+        dataTable.search(this.value).draw();
+    });
+});
+function resetFilters() {
+    $('#filterWarehouse, #filterStatus, #filterCategory').val('');
+    $('#searchInput').val('');
+    dataTable.search('').columns().search('').draw();
+}
+</script>
+@endpush

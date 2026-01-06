@@ -7,13 +7,16 @@
 
 @section('content')
 <div class="filter-row">
-    <select name="warehouse_id" class="form-select filter-select" data-column="1">
+    <select id="filterWarehouse" class="form-select">
         <option value="">Tất cả kho</option>
         @foreach($warehouses as $wh)
-        <option value="{{ $wh->id }}">{{ $wh->name }}</option>
+        <option value="{{ $wh->name }}">{{ $wh->name }}</option>
         @endforeach
     </select>
-    <input type="text" name="search" class="form-control" placeholder="Tìm mã phiếu..." style="max-width:180px;">
+    <input type="text" id="searchInput" class="form-control" placeholder="Tìm mã phiếu..." style="max-width:180px;">
+    <button class="btn btn-outline-secondary" onclick="resetFilters()" title="Reset bộ lọc">
+        <i class="bi bi-arrow-counterclockwise"></i>
+    </button>
     <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#stockInModal">
         <i class="bi bi-plus-lg"></i> Tạo phiếu nhập
     </button>
@@ -134,6 +137,20 @@
 
 @push('scripts')
 <script>
+$(document).ready(function() {
+    $('#filterWarehouse').on('change', function() {
+        dataTable.column(2).search(this.value).draw();
+    });
+    $('#searchInput').on('keyup', function() {
+        dataTable.search(this.value).draw();
+    });
+});
+function resetFilters() {
+    $('#filterWarehouse').val('');
+    $('#searchInput').val('');
+    dataTable.search('').columns().search('').draw();
+}
+
 const productOptions = `<option value="">-- Chọn SP --</option>@foreach($products as $p)<option value="{{ $p->id }}" data-price="{{ $p->cost_price }}">{{ $p->code }} - {{ $p->name }}</option>@endforeach`;
 function addRow() {
     const row = `<tr>

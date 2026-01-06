@@ -7,7 +7,10 @@
 
 @section('content')
 <div class="filter-row">
-    <input type="text" name="search" class="form-control" placeholder="Tìm kiếm..." style="max-width:250px;">
+    <input type="text" id="searchInput" class="form-control" placeholder="Tìm kiếm..." style="max-width:250px;">
+    <button class="btn btn-outline-secondary" onclick="resetFilters()" title="Reset bộ lọc">
+        <i class="bi bi-arrow-counterclockwise"></i>
+    </button>
     <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#supplierModal" onclick="resetForm()">
         <i class="bi bi-plus-lg"></i> Thêm
     </button>
@@ -93,6 +96,17 @@
 @push('scripts')
 <script>
 var baseUrl = '{{ url("suppliers") }}';
+
+$(document).ready(function() {
+    $('#searchInput').on('keyup', function() {
+        dataTable.search(this.value).draw();
+    });
+});
+function resetFilters() {
+    $('#searchInput').val('');
+    dataTable.search('').draw();
+}
+
 function resetForm() {
     document.getElementById('supplierForm').action = '{{ route("suppliers.store") }}';
     document.getElementById('formMethod').value = 'POST';

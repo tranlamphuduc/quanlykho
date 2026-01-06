@@ -7,13 +7,21 @@
 
 @section('content')
 <div class="filter-row">
-    <select name="role" class="form-select filter-select" style="max-width:150px;">
+    <select id="filterRole" class="form-select" style="max-width:180px;">
         <option value="">Tất cả vai trò</option>
-        <option value="admin">Quản trị viên</option>
-        <option value="warehouse_keeper">Thủ kho</option>
-        <option value="sales">Nhân viên KD</option>
+        <option value="Quản trị viên">Quản trị viên</option>
+        <option value="Thủ kho">Thủ kho</option>
+        <option value="Nhân viên KD">Nhân viên KD</option>
     </select>
-    <input type="text" name="search" class="form-control" placeholder="Tìm kiếm..." style="max-width:200px;">
+    <select id="filterStatus" class="form-select" style="max-width:150px;">
+        <option value="">Tất cả TT</option>
+        <option value="Hoạt động">Hoạt động</option>
+        <option value="Khóa">Khóa</option>
+    </select>
+    <input type="text" id="searchInput" class="form-control" placeholder="Tìm kiếm..." style="max-width:200px;">
+    <button class="btn btn-outline-secondary" onclick="resetFilters()" title="Reset bộ lọc">
+        <i class="bi bi-arrow-counterclockwise"></i>
+    </button>
     <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#userModal" onclick="resetForm()">
         <i class="bi bi-plus-lg"></i> Thêm
     </button>
@@ -120,6 +128,24 @@
 @push('scripts')
 <script>
 var baseUrl = '{{ url("users") }}';
+
+$(document).ready(function() {
+    $('#filterRole').on('change', function() {
+        dataTable.column(4).search(this.value).draw();
+    });
+    $('#filterStatus').on('change', function() {
+        dataTable.column(5).search(this.value).draw();
+    });
+    $('#searchInput').on('keyup', function() {
+        dataTable.search(this.value).draw();
+    });
+});
+function resetFilters() {
+    $('#filterRole, #filterStatus').val('');
+    $('#searchInput').val('');
+    dataTable.search('').columns().search('').draw();
+}
+
 function resetForm() {
     document.getElementById('userForm').action = '{{ route("users.store") }}';
     document.getElementById('formMethod').value = 'POST';

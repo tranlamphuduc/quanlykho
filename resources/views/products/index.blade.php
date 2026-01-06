@@ -7,19 +7,22 @@
 
 @section('content')
 <div class="filter-row">
-    <select name="category_id" class="form-select filter-select" data-column="2">
+    <select id="filterCategory" class="form-select">
         <option value="">Tất cả danh mục</option>
         @foreach($categories as $cat)
-        <option value="{{ $cat->id }}">{{ $cat->name }}</option>
+        <option value="{{ $cat->name }}">{{ $cat->name }}</option>
         @endforeach
     </select>
-    <select name="supplier_id" class="form-select filter-select" data-column="3">
+    <select id="filterSupplier" class="form-select">
         <option value="">Tất cả NCC</option>
         @foreach($suppliers as $sup)
-        <option value="{{ $sup->id }}">{{ $sup->name }}</option>
+        <option value="{{ $sup->name }}">{{ $sup->name }}</option>
         @endforeach
     </select>
-    <input type="text" name="search" class="form-control" placeholder="Tìm kiếm..." style="max-width:200px;">
+    <input type="text" id="searchInput" class="form-control" placeholder="Tìm kiếm..." style="max-width:200px;">
+    <button class="btn btn-outline-secondary" onclick="resetFilters()" title="Reset bộ lọc">
+        <i class="bi bi-arrow-counterclockwise"></i>
+    </button>
     <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#productModal" onclick="resetForm()">
         <i class="bi bi-plus-lg"></i> Thêm
     </button>
@@ -151,6 +154,27 @@
 @push('scripts')
 <script>
 var baseUrl = '{{ url("products") }}';
+
+// Custom filter cho DataTable
+$(document).ready(function() {
+    $('#filterCategory').on('change', function() {
+        dataTable.column(3).search(this.value).draw();
+    });
+    $('#filterSupplier').on('change', function() {
+        dataTable.column(4).search(this.value).draw();
+    });
+    $('#searchInput').on('keyup', function() {
+        dataTable.search(this.value).draw();
+    });
+});
+
+function resetFilters() {
+    $('#filterCategory').val('');
+    $('#filterSupplier').val('');
+    $('#searchInput').val('');
+    dataTable.search('').columns().search('').draw();
+}
+
 function resetForm() {
     document.getElementById('productForm').action = '{{ route("products.store") }}';
     document.getElementById('formMethod').value = 'POST';

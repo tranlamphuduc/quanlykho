@@ -18,10 +18,17 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
-        // Kiểm tra nếu đã có dữ liệu thì không seed nữa
-        if (User::count() > 0) {
-            return;
-        }
+        // Xóa hết dữ liệu cũ (theo thứ tự để tránh lỗi foreign key)
+        \DB::table('stock_out_details')->delete();
+        \DB::table('stock_in_details')->delete();
+        \DB::table('stock_outs')->delete();
+        \DB::table('stock_ins')->delete();
+        \DB::table('inventory')->delete();
+        \DB::table('products')->delete();
+        \DB::table('categories')->delete();
+        \DB::table('suppliers')->delete();
+        \DB::table('warehouses')->delete();
+        \DB::table('users')->delete();
 
         // Users - sử dụng firstOrCreate để tránh lỗi duplicate
         $admin = User::firstOrCreate(

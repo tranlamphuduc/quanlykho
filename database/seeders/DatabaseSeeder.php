@@ -170,10 +170,18 @@ class DatabaseSeeder extends Seeder
                 $total += $qty * $product->cost_price;
 
                 // Cập nhật tồn kho
-                Inventory::updateOrCreate(
-                    ['product_id' => $product->id, 'warehouse_id' => $warehouse1->id],
-                    ['quantity' => \DB::raw('quantity + ' . $qty)]
-                );
+                $inventory = Inventory::where('product_id', $product->id)
+                    ->where('warehouse_id', $warehouse1->id)
+                    ->first();
+                if ($inventory) {
+                    $inventory->increment('quantity', $qty);
+                } else {
+                    Inventory::create([
+                        'product_id' => $product->id,
+                        'warehouse_id' => $warehouse1->id,
+                        'quantity' => $qty,
+                    ]);
+                }
             }
             $stockIn1->update(['total_amount' => $total]);
 
@@ -203,10 +211,18 @@ class DatabaseSeeder extends Seeder
                     ]);
                     $total2 += $qty * $product->cost_price;
 
-                    Inventory::updateOrCreate(
-                        ['product_id' => $product->id, 'warehouse_id' => $warehouse2->id],
-                        ['quantity' => \DB::raw('quantity + ' . $qty)]
-                    );
+                    $inventory = Inventory::where('product_id', $product->id)
+                        ->where('warehouse_id', $warehouse2->id)
+                        ->first();
+                    if ($inventory) {
+                        $inventory->increment('quantity', $qty);
+                    } else {
+                        Inventory::create([
+                            'product_id' => $product->id,
+                            'warehouse_id' => $warehouse2->id,
+                            'quantity' => $qty,
+                        ]);
+                    }
                 }
                 $stockIn2->update(['total_amount' => $total2]);
             }

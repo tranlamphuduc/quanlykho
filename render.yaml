@@ -1,0 +1,35 @@
+databases:
+  - name: kho-laravel-db
+    databaseName: kho_laravel
+    user: kho_user
+    plan: free
+    region: singapore
+
+services:
+  - type: web
+    name: kho-laravel
+    plan: free
+    region: singapore
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    envVars:
+      - key: APP_NAME
+        value: "Quản lý Kho"
+      - key: APP_ENV
+        value: production
+      - key: APP_DEBUG
+        value: "false"
+      - key: APP_KEY
+        generateValue: true
+      - key: DB_CONNECTION
+        value: pgsql
+      - key: DATABASE_URL
+        fromDatabase:
+          name: kho-laravel-db
+          property: connectionString
+      - key: SESSION_DRIVER
+        value: cookie
+      - key: CACHE_DRIVER
+        value: file
+      - key: QUEUE_CONNECTION
+        value: sync

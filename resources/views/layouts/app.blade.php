@@ -50,7 +50,8 @@
         .badge { font-size: 0.85rem; padding: 0.5em 0.75em; }
         .menu-toggle { display: none; position: fixed; top: 12px; left: 12px; z-index: 1100; background: #2c3e50; color: #fff; border: none; padding: 10px 14px; border-radius: 8px; font-size: 1.3rem; }
         .filter-row { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; margin-bottom: 18px; }
-        .filter-row .form-control, .filter-row .form-select { max-width: 220px; }
+        .filter-row .form-control { max-width: 200px; }
+        .filter-row .form-select { min-width: 180px; max-width: 280px; }
         .modal-body { font-size: 1rem; }
         .modal-body .form-label { font-size: 1rem; }
         .modal-title { font-size: 1.2rem; }
@@ -68,7 +69,8 @@
             .sidebar.show { transform: translateX(0); }
             .main-content { margin-left: 0; padding: 18px; padding-top: 60px; }
             .top-navbar { padding: 14px 18px; margin: -18px -18px 18px -18px; }
-            .filter-row .form-control, .filter-row .form-select { max-width: 180px; }
+            .filter-row .form-control { max-width: 160px; }
+            .filter-row .form-select { min-width: 150px; max-width: 220px; }
         }
         @media (max-width: 576px) {
             .filter-row { flex-direction: column; align-items: stretch; }

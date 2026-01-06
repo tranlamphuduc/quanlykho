@@ -72,7 +72,7 @@
 
 <!-- Modal -->
 <div class="modal fade" id="productModal" tabindex="-1">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <form id="productForm" method="POST">
                 @csrf
@@ -83,21 +83,15 @@
                 </div>
                 <div class="modal-body">
                     <div class="row">
-                        <div class="col-6 mb-2">
+                        <div class="col-md-4 mb-2">
                             <label class="form-label">Mã SP *</label>
                             <input type="text" name="code" id="code" class="form-control" value="{{ $newCode }}" required>
                         </div>
-                        <div class="col-6 mb-2">
+                        <div class="col-md-4 mb-2">
                             <label class="form-label">Đơn vị</label>
                             <input type="text" name="unit" id="unit" class="form-control" value="Cái">
                         </div>
-                    </div>
-                    <div class="mb-2">
-                        <label class="form-label">Tên sản phẩm *</label>
-                        <input type="text" name="name" id="name" class="form-control" required>
-                    </div>
-                    <div class="row">
-                        <div class="col-6 mb-2">
+                        <div class="col-md-4 mb-2">
                             <label class="form-label">Danh mục</label>
                             <select name="category_id" id="modal_category_id" class="form-select">
                                 <option value="">-- Chọn --</option>
@@ -106,32 +100,34 @@
                                 @endforeach
                             </select>
                         </div>
-                        <div class="col-6 mb-2">
-                            <label class="form-label">Nhà cung cấp</label>
-                            <select name="supplier_id" id="modal_supplier_id" class="form-select">
-                                <option value="">-- Chọn --</option>
-                                @foreach($suppliers as $sup)
-                                <option value="{{ $sup->id }}">{{ $sup->name }}</option>
-                                @endforeach
-                            </select>
-                        </div>
+                    </div>
+                    <div class="mb-2">
+                        <label class="form-label">Tên sản phẩm *</label>
+                        <input type="text" name="name" id="name" class="form-control" required>
+                    </div>
+                    <div class="mb-2">
+                        <label class="form-label">Nhà cung cấp</label>
+                        <select name="supplier_id" id="modal_supplier_id" class="form-select">
+                            <option value="">-- Chọn --</option>
+                            @foreach($suppliers as $sup)
+                            <option value="{{ $sup->id }}">{{ $sup->name }}</option>
+                            @endforeach
+                        </select>
                     </div>
                     <div class="row">
-                        <div class="col-6 mb-2">
+                        <div class="col-md-3 mb-2">
                             <label class="form-label">Giá vốn</label>
                             <input type="number" name="cost_price" id="cost_price" class="form-control" value="0">
                         </div>
-                        <div class="col-6 mb-2">
+                        <div class="col-md-3 mb-2">
                             <label class="form-label">Giá bán</label>
                             <input type="number" name="sell_price" id="sell_price" class="form-control" value="0">
                         </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-6 mb-2">
+                        <div class="col-md-3 mb-2">
                             <label class="form-label">Tồn min</label>
                             <input type="number" name="min_stock" id="min_stock" class="form-control" value="10">
                         </div>
-                        <div class="col-6 mb-2">
+                        <div class="col-md-3 mb-2">
                             <label class="form-label">Tồn max</label>
                             <input type="number" name="max_stock" id="max_stock" class="form-control" value="1000">
                         </div>

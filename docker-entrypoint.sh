@@ -1,25 +1,20 @@
 #!/bin/bash
 
-# Generate key if not exists
-if [ -z "$APP_KEY" ]; then
-    php artisan key:generate --force
-fi
+# Set permissions first
+chmod -R 777 /var/www/html/storage
+chmod -R 777 /var/www/html/bootstrap/cache
+
+# Clear all caches
+php artisan config:clear
+php artisan cache:clear
+php artisan route:clear
+php artisan view:clear
 
 # Run migrations
-php artisan migrate --force
+php artisan migrate --force || echo "Migration failed, continuing..."
 
-# Run seeder (only if database is empty)
-php artisan db:seed --force 2>/dev/null || true
-
-# Clear and cache config
-php artisan config:clear
-php artisan config:cache
-php artisan route:cache
-php artisan view:cache
-
-# Set permissions
-chmod -R 775 /var/www/html/storage
-chmod -R 775 /var/www/html/bootstrap/cache
+# Run seeder
+php artisan db:seed --force || echo "Seeder failed or already seeded"
 
 # Start Apache
 apache2-foreground

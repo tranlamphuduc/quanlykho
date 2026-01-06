@@ -69,10 +69,10 @@ class StockIn extends Model
     public static function getMonthlyStats($year = null)
     {
         $year = $year ?? date('Y');
-        return self::selectRaw('MONTH(created_at) as month, COUNT(*) as count, SUM(total_amount) as total')
+        return self::selectRaw('EXTRACT(MONTH FROM created_at)::integer as month, COUNT(*) as count, SUM(total_amount) as total')
             ->whereYear('created_at', $year)
             ->where('status', 'completed')
-            ->groupBy(DB::raw('MONTH(created_at)'))
+            ->groupBy(DB::raw('EXTRACT(MONTH FROM created_at)'))
             ->orderBy('month')
             ->get()
             ->keyBy('month');

@@ -18,38 +18,46 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
-        // Users
-        $admin = User::create([
-            'name' => 'Quản trị viên',
-            'email' => 'admin@warehouse.com',
-            'password' => Hash::make('password'),
-            'role' => 'admin',
-            'status' => true,
-        ]);
+        // Users - sử dụng firstOrCreate để tránh lỗi duplicate
+        $admin = User::firstOrCreate(
+            ['email' => 'admin@warehouse.com'],
+            [
+                'name' => 'Quản trị viên',
+                'password' => Hash::make('password'),
+                'role' => 'admin',
+                'status' => true,
+            ]
+        );
 
-        $keeper1 = User::create([
-            'name' => 'Nguyễn Văn A',
-            'email' => 'thukho@warehouse.com',
-            'password' => Hash::make('password'),
-            'role' => 'warehouse_keeper',
-            'status' => true,
-        ]);
+        $keeper1 = User::firstOrCreate(
+            ['email' => 'thukho@warehouse.com'],
+            [
+                'name' => 'Nguyễn Văn A',
+                'password' => Hash::make('password'),
+                'role' => 'warehouse_keeper',
+                'status' => true,
+            ]
+        );
 
-        $keeper2 = User::create([
-            'name' => 'Trần Văn B',
-            'email' => 'thukho2@warehouse.com',
-            'password' => Hash::make('password'),
-            'role' => 'warehouse_keeper',
-            'status' => true,
-        ]);
+        $keeper2 = User::firstOrCreate(
+            ['email' => 'thukho2@warehouse.com'],
+            [
+                'name' => 'Trần Văn B',
+                'password' => Hash::make('password'),
+                'role' => 'warehouse_keeper',
+                'status' => true,
+            ]
+        );
 
-        User::create([
-            'name' => 'Lê Thị C',
-            'email' => 'sales@warehouse.com',
-            'password' => Hash::make('password'),
-            'role' => 'sales',
-            'status' => true,
-        ]);
+        User::firstOrCreate(
+            ['email' => 'sales@warehouse.com'],
+            [
+                'name' => 'Lê Thị C',
+                'password' => Hash::make('password'),
+                'role' => 'sales',
+                'status' => true,
+            ]
+        );
 
         // Categories - Danh mục đồ gia dụng
         $categories = [
@@ -62,7 +70,7 @@ class DatabaseSeeder extends Seeder
             ['name' => 'Đồ phòng tắm', 'description' => 'Vòi sen, kệ phòng tắm, rèm tắm'],
         ];
         foreach ($categories as $cat) {
-            Category::create($cat);
+            Category::firstOrCreate(['name' => $cat['name']], $cat);
         }
 
         // Suppliers - Nhà cung cấp
@@ -74,7 +82,7 @@ class DatabaseSeeder extends Seeder
             ['name' => 'Công ty TNHH Happycook', 'phone' => '0945678901', 'email' => 'happycook@supplier.com', 'address' => '654 Cách Mạng Tháng 8, Q10, TP.HCM'],
         ];
         foreach ($suppliers as $sup) {
-            Supplier::create($sup);
+            Supplier::firstOrCreate(['email' => $sup['email']], $sup);
         }
 
         // Warehouses - Kho hàng

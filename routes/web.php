@@ -44,11 +44,15 @@ Route::middleware(['auth'])->group(function () {
     Route::get('stock-in', [StockInController::class, 'index'])->name('stock-in.index');
     Route::post('stock-in', [StockInController::class, 'store'])->name('stock-in.store');
     Route::get('stock-in/{stockIn}', [StockInController::class, 'show'])->name('stock-in.show');
+    Route::get('stock-in/{stockIn}/export-excel', [StockInController::class, 'exportExcel'])->name('stock-in.export.excel');
+    Route::get('stock-in/{stockIn}/export-pdf', [StockInController::class, 'exportPdf'])->name('stock-in.export.pdf');
     
     // Stock Out
     Route::get('stock-out', [StockOutController::class, 'index'])->name('stock-out.index');
     Route::post('stock-out', [StockOutController::class, 'store'])->name('stock-out.store');
     Route::get('stock-out/{stockOut}', [StockOutController::class, 'show'])->name('stock-out.show');
+    Route::get('stock-out/{stockOut}/export-excel', [StockOutController::class, 'exportExcel'])->name('stock-out.export.excel');
+    Route::get('stock-out/{stockOut}/export-pdf', [StockOutController::class, 'exportPdf'])->name('stock-out.export.pdf');
     
     // Inventory
     Route::get('inventory', [InventoryController::class, 'index'])->name('inventory.index');

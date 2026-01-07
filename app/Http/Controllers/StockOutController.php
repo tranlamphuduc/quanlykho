@@ -5,7 +5,10 @@ namespace App\Http\Controllers;
 use App\Models\StockOut;
 use App\Models\Product;
 use App\Models\Warehouse;
+use App\Exports\StockOutExport;
 use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class StockOutController extends Controller
 {
@@ -88,5 +91,18 @@ class StockOutController extends Controller
     {
         $stockOut->load(['warehouse', 'user', 'details.product']);
         return view('stock-out.show', compact('stockOut'));
+    }
+
+    public function exportExcel(StockOut $stockOut)
+    {
+        $stockOut->load(['details.product']);
+        return Excel::download(new StockOutExport($stockOut), 'phieu-xuat-' . $stockOut->code . '.xlsx');
+    }
+
+    public function exportPdf(StockOut $stockOut)
+    {
+        $stockOut->load(['warehouse', 'user', 'details.product']);
+        $pdf = Pdf::loadView('stock-out.pdf', compact('stockOut'));
+        return $pdf->download('phieu-xuat-' . $stockOut->code . '.pdf');
     }
 }

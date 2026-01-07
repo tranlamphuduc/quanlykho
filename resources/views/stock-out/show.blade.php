@@ -10,6 +10,12 @@
     <a href="{{ route('stock-out.index') }}" class="btn btn-secondary">
         <i class="bi bi-arrow-left me-1"></i>Quay lại
     </a>
+    <a href="{{ route('stock-out.export.excel', $stockOut) }}" class="btn btn-success">
+        <i class="bi bi-file-earmark-excel me-1"></i>Excel
+    </a>
+    <a href="{{ route('stock-out.export.pdf', $stockOut) }}" class="btn btn-danger">
+        <i class="bi bi-file-earmark-pdf me-1"></i>PDF
+    </a>
 </div>
 
 <div class="row">

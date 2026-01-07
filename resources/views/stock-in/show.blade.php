@@ -10,6 +10,12 @@
     <a href="{{ route('stock-in.index') }}" class="btn btn-secondary">
         <i class="bi bi-arrow-left me-1"></i>Quay lại
     </a>
+    <a href="{{ route('stock-in.export.excel', $stockIn) }}" class="btn btn-success">
+        <i class="bi bi-file-earmark-excel me-1"></i>Excel
+    </a>
+    <a href="{{ route('stock-in.export.pdf', $stockIn) }}" class="btn btn-danger">
+        <i class="bi bi-file-earmark-pdf me-1"></i>PDF
+    </a>
 </div>
 
 <div class="row">

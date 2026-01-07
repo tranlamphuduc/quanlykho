@@ -6,7 +6,10 @@ use App\Models\StockIn;
 use App\Models\Product;
 use App\Models\Warehouse;
 use App\Models\Supplier;
+use App\Exports\StockInExport;
 use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class StockInController extends Controller
 {
@@ -94,5 +97,18 @@ class StockInController extends Controller
     {
         $stockIn->load(['warehouse', 'supplier', 'user', 'details.product']);
         return view('stock-in.show', compact('stockIn'));
+    }
+
+    public function exportExcel(StockIn $stockIn)
+    {
+        $stockIn->load(['details.product']);
+        return Excel::download(new StockInExport($stockIn), 'phieu-nhap-' . $stockIn->code . '.xlsx');
+    }
+
+    public function exportPdf(StockIn $stockIn)
+    {
+        $stockIn->load(['warehouse', 'supplier', 'user', 'details.product']);
+        $pdf = Pdf::loadView('stock-in.pdf', compact('stockIn'));
+        return $pdf->download('phieu-nhap-' . $stockIn->code . '.pdf');
     }
 }

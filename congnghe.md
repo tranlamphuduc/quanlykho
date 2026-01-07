@@ -1,99 +1,93 @@
-# Công nghệ sử dụng trong Website Quản lý Kho Đồ Gia Dụng
+# Công nghệ sử dụng - Hệ thống Quản lý Kho Đồ Gia Dụng
 
-## CÔNG NGHỆ CHÍNH
+## 1. CÔNG NGHỆ CHÍNH
 
-| Công nghệ | Mô tả |
-|-----------|-------|
-| **PHP 8.2** | Ngôn ngữ lập trình backend |
-| **Laravel 12** | Framework PHP theo mô hình MVC |
-| **MySQL** | Hệ quản trị cơ sở dữ liệu |
-| **Bootstrap 5** | CSS Framework cho giao diện |
-| **Chart.js** | Thư viện vẽ biểu đồ |
+| Công nghệ | Phiên bản | Mô tả |
+|-----------|-----------|-------|
+| **PHP** | 8.2+ | Ngôn ngữ lập trình backend |
+| **Laravel** | 12.x | Framework PHP theo mô hình MVC |
+| **PostgreSQL** | 15+ | Hệ quản trị CSDL (Production - Neon) |
+| **Bootstrap** | 5.3 | CSS Framework responsive |
+| **Chart.js** | Latest | Thư viện vẽ biểu đồ |
 
 ---
 
-## DANH SÁCH ĐẦY ĐỦ CÁC CÔNG NGHỆ
-
-### 1. Backend
-
-| Công nghệ | Phiên bản | Mô tả |
-|-----------|-----------|-------|
-| PHP | 8.2+ | Ngôn ngữ lập trình chính |
-| Laravel Framework | 12.44.0 | Framework PHP theo mô hình MVC |
-| Laravel Breeze | 2.3 | Hệ thống Authentication (đăng nhập/đăng ký/quên mật khẩu) |
-| Laravel Tinker | 2.10 | REPL để debug và test |
-| Eloquent ORM | (built-in) | Object-Relational Mapping - thao tác database như object |
-| Blade Template Engine | (built-in) | Template engine của Laravel |
-| MySQL | 5.7+ | Hệ quản trị cơ sở dữ liệu |
-| PDO | (built-in) | PHP Data Objects - database driver |
-
-### 2. Frontend
-
-| Công nghệ | Phiên bản | Mô tả |
-|-----------|-----------|-------|
-| Bootstrap | 5.3.0 | CSS Framework responsive, mobile-first |
-| Bootstrap Icons | 1.10.0 | Thư viện icon SVG |
-| jQuery | 3.6.0 | JavaScript library |
-| DataTables | 1.13.4 | Plugin hiển thị bảng dữ liệu (phân trang, tìm kiếm, sắp xếp) |
-| Chart.js | latest | Thư viện vẽ biểu đồ (bar, line, pie chart) |
-
-### 3. Development Tools
+## 2. BACKEND
 
 | Công nghệ | Mô tả |
 |-----------|-------|
-| Composer | PHP dependency manager |
-| NPM | Node.js package manager |
-| Vite | Build tool cho frontend assets |
-| PHPUnit | Framework unit testing |
-| Laravel Pint | Code style fixer theo chuẩn PSR-12 |
-| FakerPHP | Thư viện tạo dữ liệu mẫu |
+| Laravel Framework | Framework PHP theo mô hình MVC |
+| Laravel Breeze | Hệ thống Authentication |
+| Eloquent ORM | Object-Relational Mapping |
+| Blade Template | Template engine của Laravel |
+| Maatwebsite Excel | Xuất file Excel |
+| Barryvdh DomPDF | Xuất file PDF |
+| Simple QRCode | Tạo mã QR cho sản phẩm |
 
-### 4. Kiến trúc & Design Patterns
+## 3. FRONTEND
+
+| Công nghệ | Mô tả |
+|-----------|-------|
+| Bootstrap 5.3 | CSS Framework responsive |
+| Bootstrap Icons | Thư viện icon SVG |
+| jQuery 3.6 | JavaScript library |
+| DataTables 1.13 | Plugin bảng dữ liệu (phân trang, tìm kiếm, sắp xếp) |
+| Chart.js | Biểu đồ thống kê (bar, line, pie) |
+
+## 4. DEPLOYMENT & INFRASTRUCTURE
+
+| Công nghệ | Mô tả |
+|-----------|-------|
+| Docker | Container hóa ứng dụng |
+| Render.com | Cloud hosting (Web Service) |
+| Neon.tech | PostgreSQL Database hosting |
+| Apache | Web server trong Docker |
+
+## 5. KIẾN TRÚC & DESIGN PATTERNS
 
 | Pattern | Mô tả |
 |---------|-------|
-| MVC (Model-View-Controller) | Tách biệt logic xử lý, giao diện và dữ liệu |
-| Middleware | Xử lý request trước khi đến controller (Auth, Admin) |
-| Migration | Quản lý version schema database |
-| Seeder | Tạo dữ liệu mẫu tự động |
-| RBAC (Role-Based Access Control) | Phân quyền theo vai trò (Admin, Thủ kho, Sales) |
+| MVC | Model-View-Controller |
+| Middleware | Xử lý Auth, Admin permission |
+| Migration | Quản lý schema database |
+| Seeder | Tạo dữ liệu mẫu |
+| RBAC | Phân quyền theo vai trò |
 
-### 5. Bảo mật
+## 6. BẢO MẬT
 
 | Tính năng | Mô tả |
 |-----------|-------|
-| CSRF Protection | Chống tấn công Cross-Site Request Forgery |
+| CSRF Protection | Chống Cross-Site Request Forgery |
 | XSS Protection | Blade tự động escape output |
-| SQL Injection Prevention | Eloquent ORM sử dụng prepared statements |
-| Password Hashing | Bcrypt với 12 rounds |
-| Session Security | Session được mã hóa và xác thực |
+| SQL Injection Prevention | Eloquent sử dụng prepared statements |
+| Password Hashing | Bcrypt encryption |
+| Session Security | Session mã hóa và xác thực |
 
-### 6. Server & Infrastructure
-
-| Công nghệ | Mô tả |
-|-----------|-------|
-| Apache | Web server |
-| XAMPP | Local development stack (Apache + MySQL + PHP) |
-
-### 7. Cấu trúc thư mục Laravel
+## 7. CẤU TRÚC THƯ MỤC
 
 ```
 kho-laravel/
 ├── app/
-│   ├── Http/
-│   │   ├── Controllers/     # Xử lý logic nghiệp vụ
-│   │   └── Middleware/      # Xử lý request (Auth, Admin)
-│   └── Models/              # Eloquent Models (ORM)
+│   ├── Http/Controllers/    # Xử lý logic nghiệp vụ
+│   ├── Models/              # Eloquent Models
+│   └── Exports/             # Export Excel/PDF
 ├── database/
 │   ├── migrations/          # Schema database
 │   └── seeders/             # Dữ liệu mẫu
-├── resources/
-│   └── views/               # Blade templates
-├── routes/
-│   ├── web.php              # Routes cho web
-│   └── auth.php             # Routes authentication
-├── config/                  # Cấu hình ứng dụng
-├── public/                  # Entry point (index.php)
-├── storage/                 # Logs, cache, uploads
-└── vendor/                  # Dependencies (Composer)
+├── resources/views/         # Blade templates
+├── routes/web.php           # Routes
+├── Dockerfile               # Docker configuration
+└── docker-entrypoint.sh     # Docker startup script
 ```
+
+## 8. TÍNH NĂNG ĐÃ TRIỂN KHAI
+
+- ✅ Quản lý sản phẩm, danh mục, nhà cung cấp, kho hàng
+- ✅ Nhập kho / Xuất kho với chi tiết phiếu
+- ✅ Báo cáo tồn kho theo kho, trạng thái
+- ✅ Dashboard thống kê với biểu đồ
+- ✅ Tạo mã QR cho sản phẩm
+- ✅ Xuất báo cáo PDF/Excel
+- ✅ Phân quyền: Admin, Thủ kho, Nhân viên KD
+- ✅ Cảnh báo tồn kho (thấp/cao)
+- ✅ Responsive design (mobile-friendly)

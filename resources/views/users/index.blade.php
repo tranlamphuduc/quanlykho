@@ -131,10 +131,10 @@ var baseUrl = '{{ url("users") }}';
 
 $(document).ready(function() {
     $('#filterRole').on('change', function() {
-        dataTable.column(4).search(this.value).draw();
+        dataTable.column(3).search(this.value).draw();
     });
     $('#filterStatus').on('change', function() {
-        dataTable.column(5).search(this.value).draw();
+        dataTable.column(4).search(this.value).draw();
     });
     $('#searchInput').on('keyup', function() {
         dataTable.search(this.value).draw();

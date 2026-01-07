@@ -115,13 +115,13 @@
 <script>
 $(document).ready(function() {
     $('#filterWarehouse').on('change', function() {
-        dataTable.column(5).search(this.value).draw();
+        dataTable.column(4).search(this.value).draw();
     });
     $('#filterStatus').on('change', function() {
-        dataTable.column(7).search(this.value).draw();
+        dataTable.column(6).search(this.value).draw();
     });
     $('#filterCategory').on('change', function() {
-        dataTable.column(4).search(this.value).draw();
+        dataTable.column(3).search(this.value).draw();
     });
     $('#searchInput').on('keyup', function() {
         dataTable.search(this.value).draw();

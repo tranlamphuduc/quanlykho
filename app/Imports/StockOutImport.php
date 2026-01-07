@@ -16,11 +16,19 @@ class StockOutImport implements ToArray, WithHeadingRow
         foreach ($rows as $index => $row) {
             $rowNum = $index + 2;
             
-            if (empty($row['ma_sp']) && empty($row['so_luong'])) {
+            // Lấy giá trị an toàn
+            $maSp = $this->getValue($row, 'ma_sp');
+            $soLuong = $this->getValue($row, 'so_luong');
+            $donGia = $this->getValue($row, 'don_gia');
+            $serial = $this->getValue($row, 'serial');
+            
+            // Bỏ qua dòng trống hoàn toàn
+            if (empty($maSp) && empty($soLuong)) {
                 continue;
             }
 
-            $productCode = trim($row['ma_sp'] ?? '');
+            // Validate mã SP
+            $productCode = trim($maSp ?? '');
             if (empty($productCode)) {
                 $this->errors[] = "Dòng {$rowNum}: Mã SP không được để trống";
                 continue;
@@ -32,13 +40,15 @@ class StockOutImport implements ToArray, WithHeadingRow
                 continue;
             }
 
-            $quantity = intval($row['so_luong'] ?? 0);
+            // Validate số lượng
+            $quantity = intval($soLuong);
             if ($quantity <= 0) {
-                $this->errors[] = "Dòng {$rowNum}: Số lượng phải > 0";
+                $this->errors[] = "Dòng {$rowNum}: Số lượng phải > 0 (hiện tại: '{$soLuong}')";
                 continue;
             }
 
-            $unitPrice = floatval($row['don_gia'] ?? $product->sell_price);
+            // Validate đơn giá - nếu trống thì dùng giá bán của sản phẩm
+            $unitPrice = $donGia !== '' && $donGia !== null ? $this->parseNumber($donGia) : $product->sell_price;
             if ($unitPrice < 0) {
                 $this->errors[] = "Dòng {$rowNum}: Đơn giá không hợp lệ";
                 continue;
@@ -50,9 +60,46 @@ class StockOutImport implements ToArray, WithHeadingRow
                 'product_name' => $product->name,
                 'quantity' => $quantity,
                 'unit_price' => $unitPrice,
-                'serial_number' => $row['serial'] ?? null,
+                'serial_number' => !empty($serial) ? $serial : null,
             ];
         }
+    }
+
+    /**
+     * Lấy giá trị an toàn từ row, tránh lỗi nếu key không tồn tại
+     */
+    private function getValue(array $row, string $key): mixed
+    {
+        if (array_key_exists($key, $row)) {
+            return $row[$key];
+        }
+        
+        // Thử tìm key tương tự (lowercase, trim)
+        foreach ($row as $k => $v) {
+            if (strtolower(trim($k)) === strtolower($key)) {
+                return $v;
+            }
+        }
+        
+        return null;
+    }
+
+    /**
+     * Parse số từ chuỗi, xử lý cả số có dấu chấm/phẩy phân cách hàng nghìn
+     * VD: "450.000" hoặc "450,000" -> 450000
+     */
+    private function parseNumber($value): float
+    {
+        if (is_numeric($value)) {
+            return floatval($value);
+        }
+        
+        $value = trim((string) $value);
+        
+        // Xóa dấu chấm/phẩy phân cách hàng nghìn (giữ lại số)
+        $cleaned = preg_replace('/[.,](?=\d{3}(?:[.,]|$))/', '', $value);
+        
+        return floatval($cleaned);
     }
 
     public function hasErrors(): bool

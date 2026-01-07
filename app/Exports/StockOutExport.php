@@ -44,8 +44,8 @@ class StockOutExport implements FromCollection, WithHeadings, WithMapping, WithT
             $detail->product->code,
             $detail->product->name,
             $detail->quantity,
-            number_format($detail->unit_price, 0, ',', '.'),
-            number_format($detail->quantity * $detail->unit_price, 0, ',', '.'),
+            $detail->unit_price,
+            $detail->quantity * $detail->unit_price,
             $detail->serial_number ?? '-',
         ];
     }

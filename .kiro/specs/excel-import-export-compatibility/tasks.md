@@ -1,0 +1,76 @@
+# Implementation Plan
+
+- [ ] 1. Update StockInExport for import compatibility
+  - [ ] 1.1 Change headings to snake_case format (stt, ma_sp, ten_sp, so_luong, don_gia, thanh_tien, so_lo, han_sd, serial)
+    - Modify `headings()` method in `StockInExport.php`
+    - _Requirements: 1.1, 3.1, 3.3_
+  - [ ] 1.2 Update map() to return raw numbers instead of formatted strings
+    - Remove `number_format()` calls for don_gia and thanh_tien
+    - Format date as `Y-m-d` instead of `d/m/Y`
+    - Return empty string instead of '-' for null values
+    - _Requirements: 1.4_
+  - [ ]* 1.3 Write property test for StockIn round-trip
+    - **Property 1: Round-trip StockIn data preservation**
+    - **Validates: Requirements 1.3**
+
+- [ ] 2. Update StockOutExport for import compatibility
+  - [ ] 2.1 Change headings to snake_case format (stt, ma_sp, ten_sp, so_luong, don_gia, thanh_tien, serial)
+    - Modify `headings()` method in `StockOutExport.php`
+    - _Requirements: 2.1, 3.1, 3.4_
+  - [ ] 2.2 Update map() to return raw numbers instead of formatted strings
+    - Remove `number_format()` calls
+    - Return empty string instead of '-' for null values
+    - _Requirements: 2.4_
+  - [ ]* 2.3 Write property test for StockOut round-trip
+    - **Property 2: Round-trip StockOut data preservation**
+    - **Validates: Requirements 2.3**
+
+- [ ] 3. Update StockInImport to handle exported files
+  - [ ] 3.1 Add header normalization to support both Vietnamese and snake_case headers
+    - Create HEADER_MAP constant for Vietnamese to snake_case mapping
+    - Update `getValue()` method to normalize headers
+    - _Requirements: 3.2_
+  - [ ] 3.2 Add logic to ignore STT and calculated columns
+    - Define IGNORED_COLUMNS constant
+    - Skip processing for ignored columns
+    - _Requirements: 1.2_
+  - [ ] 3.3 Add number parsing for formatted values
+    - Create `parseNumber()` method to handle thousand separators
+    - Apply to don_gia field
+    - _Requirements: 1.5_
+  - [ ]* 3.4 Write property test for STT column ignored
+    - **Property 3: STT column is ignored during import**
+    - **Validates: Requirements 1.2, 2.2**
+  - [ ]* 3.5 Write property test for formatted number parsing
+    - **Property 4: Formatted numbers are parsed correctly**
+    - **Validates: Requirements 1.5, 2.5**
+
+- [ ] 4. Update StockOutImport to handle exported files
+  - [ ] 4.1 Add header normalization to support both Vietnamese and snake_case headers
+    - Create HEADER_MAP constant
+    - Update `getValue()` method
+    - _Requirements: 3.2_
+  - [ ] 4.2 Add logic to ignore STT and calculated columns
+    - Define IGNORED_COLUMNS constant
+    - _Requirements: 2.2_
+  - [ ] 4.3 Add number parsing for formatted values
+    - Create `parseNumber()` method
+    - _Requirements: 2.5_
+
+- [ ] 5. Add import feedback improvements
+  - [ ] 5.1 Add row count reporting to StockInImport
+    - Track total rows processed
+    - Add `getProcessedCount()` method
+    - _Requirements: 4.3_
+  - [ ] 5.2 Add row count reporting to StockOutImport
+    - Same as 5.1
+    - _Requirements: 4.3_
+  - [ ]* 5.3 Write property test for unknown columns ignored
+    - **Property 5: Unknown columns are ignored without error**
+    - **Validates: Requirements 4.1**
+  - [ ]* 5.4 Write property test for row count accuracy
+    - **Property 6: Import row count matches input**
+    - **Validates: Requirements 4.3**
+
+- [ ] 6. Checkpoint - Make sure all tests are passing
+  - Ensure all tests pass, ask the user if questions arise.

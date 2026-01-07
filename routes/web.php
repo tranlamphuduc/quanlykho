@@ -43,6 +43,8 @@ Route::middleware(['auth'])->group(function () {
     // Stock In
     Route::get('stock-in', [StockInController::class, 'index'])->name('stock-in.index');
     Route::post('stock-in', [StockInController::class, 'store'])->name('stock-in.store');
+    Route::get('stock-in/template', [StockInController::class, 'downloadTemplate'])->name('stock-in.template');
+    Route::post('stock-in/import', [StockInController::class, 'import'])->name('stock-in.import');
     Route::get('stock-in/{stockIn}', [StockInController::class, 'show'])->name('stock-in.show');
     Route::get('stock-in/{stockIn}/edit', [StockInController::class, 'edit'])->name('stock-in.edit');
     Route::put('stock-in/{stockIn}', [StockInController::class, 'update'])->name('stock-in.update');
@@ -55,6 +57,8 @@ Route::middleware(['auth'])->group(function () {
     // Stock Out
     Route::get('stock-out', [StockOutController::class, 'index'])->name('stock-out.index');
     Route::post('stock-out', [StockOutController::class, 'store'])->name('stock-out.store');
+    Route::get('stock-out/template', [StockOutController::class, 'downloadTemplate'])->name('stock-out.template');
+    Route::post('stock-out/import', [StockOutController::class, 'import'])->name('stock-out.import');
     Route::get('stock-out/{stockOut}', [StockOutController::class, 'show'])->name('stock-out.show');
     Route::get('stock-out/{stockOut}/edit', [StockOutController::class, 'edit'])->name('stock-out.edit');
     Route::put('stock-out/{stockOut}', [StockOutController::class, 'update'])->name('stock-out.update');

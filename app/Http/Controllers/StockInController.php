@@ -7,6 +7,8 @@ use App\Models\Product;
 use App\Models\Warehouse;
 use App\Models\Supplier;
 use App\Exports\StockInExport;
+use App\Exports\StockInTemplateExport;
+use App\Imports\StockInImport;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -228,5 +230,57 @@ class StockInController extends Controller
         $stockIn->load(['warehouse', 'supplier', 'user', 'approver', 'details.product']);
         $pdf = Pdf::loadView('stock-in.pdf', compact('stockIn'));
         return $pdf->download('phieu-nhap-' . $stockIn->code . '.pdf');
+    }
+
+    public function downloadTemplate()
+    {
+        return Excel::download(new StockInTemplateExport, 'mau-nhap-kho.xlsx');
+    }
+
+    public function import(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|mimes:xlsx,xls',
+            'warehouse_id' => 'required|exists:warehouses,id',
+            'supplier_id' => 'nullable|exists:suppliers,id',
+        ]);
+
+        try {
+            $import = new StockInImport;
+            Excel::import($import, $request->file('file'));
+
+            if ($import->hasErrors()) {
+                return back()->with('error', 'Lỗi import: ' . implode(', ', $import->getErrors()))->withInput();
+            }
+
+            if (empty($import->getData())) {
+                return back()->with('error', 'File không có dữ liệu hợp lệ!')->withInput();
+            }
+
+            $data = [
+                'code' => StockIn::generateCode(),
+                'warehouse_id' => $request->warehouse_id,
+                'supplier_id' => $request->supplier_id,
+                'user_id' => auth()->id(),
+                'note' => $request->note ?? 'Import từ Excel',
+            ];
+
+            $details = [];
+            foreach ($import->getData() as $row) {
+                $details[] = [
+                    'product_id' => $row['product_id'],
+                    'quantity' => $row['quantity'],
+                    'unit_price' => $row['unit_price'],
+                    'batch_number' => $row['batch_number'],
+                    'expiry_date' => $row['expiry_date'],
+                    'serial_number' => $row['serial_number'],
+                ];
+            }
+
+            StockIn::createWithDetails($data, $details);
+            return redirect()->route('stock-in.index')->with('success', 'Import thành công! Đã tạo phiếu nhập với ' . count($details) . ' sản phẩm.');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Lỗi: ' . $e->getMessage())->withInput();
+        }
     }
 }

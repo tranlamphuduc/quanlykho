@@ -66,7 +66,6 @@
                         <td>{{ $so->created_at->format('d/m/Y') }}</td>
                         <td>
                             <a href="{{ route('stock-out.show', $so) }}" class="btn btn-sm btn-outline-info" title="Xem"><i class="bi bi-eye"></i></a>
-                            
                             @if($so->status === 'pending')
                                 @if(auth()->user()->role === 'admin')
                                     <form action="{{ route('stock-out.approve', $so) }}" method="POST" class="d-inline" onsubmit="return confirm('Duyệt phiếu này? Tồn kho sẽ bị trừ.')">
@@ -74,7 +73,6 @@
                                         <button type="submit" class="btn btn-sm btn-success" title="Duyệt"><i class="bi bi-check-lg"></i></button>
                                     </form>
                                 @endif
-                                
                                 @if(auth()->user()->role === 'admin' || $so->user_id === auth()->id())
                                     <a href="{{ route('stock-out.edit', $so) }}" class="btn btn-sm btn-outline-warning" title="Sửa"><i class="bi bi-pencil"></i></a>
                                     <form action="{{ route('stock-out.destroy', $so) }}" method="POST" class="d-inline" onsubmit="return confirm('Xóa phiếu này?')">
@@ -84,7 +82,6 @@
                                     </form>
                                 @endif
                             @endif
-                            
                             @if($so->status === 'completed' && auth()->user()->role === 'admin')
                                 <form action="{{ route('stock-out.cancel', $so) }}" method="POST" class="d-inline" onsubmit="return confirm('Hủy phiếu này? Tồn kho sẽ được hoàn trả.')">
                                     @csrf
@@ -104,71 +101,142 @@
 <div class="modal fade" id="stockOutModal" tabindex="-1">
     <div class="modal-dialog modal-xl">
         <div class="modal-content">
-            <form action="{{ route('stock-out.store') }}" method="POST">
-                @csrf
-                <div class="modal-header py-2">
-                    <h6 class="modal-title">Tạo phiếu xuất kho</h6>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="alert alert-info py-2 mb-3">
-                        <i class="bi bi-info-circle me-1"></i> Phiếu sẽ ở trạng thái <strong>Chờ duyệt</strong>. Admin cần duyệt để trừ tồn kho.
-                    </div>
-                    <div class="row mb-2">
-                        <div class="col-md-3 mb-2">
-                            <label class="form-label">Mã phiếu</label>
-                            <input type="text" name="code" class="form-control" value="{{ $newCode }}" readonly>
-                        </div>
-                        <div class="col-md-3 mb-2">
-                            <label class="form-label">Kho xuất *</label>
-                            <select name="warehouse_id" class="form-select" required>
-                                @foreach($warehouses as $wh)
-                                <option value="{{ $wh->id }}">{{ $wh->name }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div class="col-md-3 mb-2">
-                            <label class="form-label">Khách hàng</label>
-                            <input type="text" name="customer_name" class="form-control">
-                        </div>
-                        <div class="col-md-3 mb-2">
-                            <label class="form-label">Ghi chú</label>
-                            <input type="text" name="note" class="form-control">
-                        </div>
-                    </div>
-                    
-                    <table class="table table-bordered table-sm">
-                        <thead class="table-light">
-                            <tr>
-                                <th>Sản phẩm</th>
-                                <th width="80">SL</th>
-                                <th width="100">Đơn giá</th>
-                                <th width="40"></th>
-                            </tr>
-                        </thead>
-                        <tbody id="productRows">
-                            <tr>
-                                <td>
-                                    <select name="product_id[]" class="form-select form-select-sm" onchange="fillSellPrice(this)" required>
-                                        <option value="">-- Chọn SP --</option>
-                                        @foreach($products as $p)
-                                        <option value="{{ $p->id }}" data-price="{{ $p->sell_price }}">{{ $p->code }} - {{ $p->name }}</option>
+            <div class="modal-header py-2">
+                <h6 class="modal-title">Tạo phiếu xuất kho</h6>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Tabs -->
+                <ul class="nav nav-tabs mb-3" role="tablist">
+                    <li class="nav-item">
+                        <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#tabManual" type="button">
+                            <i class="bi bi-pencil me-1"></i>Nhập tay
+                        </button>
+                    </li>
+                    <li class="nav-item">
+                        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tabImport" type="button">
+                            <i class="bi bi-file-earmark-excel me-1"></i>Import Excel
+                        </button>
+                    </li>
+                </ul>
+
+                <div class="tab-content">
+                    <!-- Tab nhập tay -->
+                    <div class="tab-pane fade show active" id="tabManual">
+                        <form action="{{ route('stock-out.store') }}" method="POST">
+                            @csrf
+                            <div class="alert alert-info py-2 mb-3">
+                                <i class="bi bi-info-circle me-1"></i> Phiếu sẽ ở trạng thái <strong>Chờ duyệt</strong>. Admin cần duyệt để trừ tồn kho.
+                            </div>
+                            <div class="row mb-2">
+                                <div class="col-md-3 mb-2">
+                                    <label class="form-label">Mã phiếu</label>
+                                    <input type="text" name="code" class="form-control" value="{{ $newCode }}" readonly>
+                                </div>
+                                <div class="col-md-3 mb-2">
+                                    <label class="form-label">Kho xuất *</label>
+                                    <select name="warehouse_id" class="form-select" required>
+                                        @foreach($warehouses as $wh)
+                                        <option value="{{ $wh->id }}">{{ $wh->name }}</option>
                                         @endforeach
                                     </select>
-                                </td>
-                                <td><input type="number" name="quantity[]" class="form-control form-control-sm" min="1" value="1" required></td>
-                                <td><input type="number" name="unit_price[]" class="form-control form-control-sm" min="0" value="0" required></td>
-                                <td><button type="button" class="btn btn-sm btn-danger" onclick="removeRow(this)"><i class="bi bi-trash"></i></button></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                    <button type="button" class="btn btn-outline-primary btn-sm" onclick="addRow()"><i class="bi bi-plus"></i> Thêm dòng</button>
+                                </div>
+                                <div class="col-md-3 mb-2">
+                                    <label class="form-label">Khách hàng</label>
+                                    <input type="text" name="customer_name" class="form-control">
+                                </div>
+                                <div class="col-md-3 mb-2">
+                                    <label class="form-label">Ghi chú</label>
+                                    <input type="text" name="note" class="form-control">
+                                </div>
+                            </div>
+                            
+                            <table class="table table-bordered table-sm">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Sản phẩm</th>
+                                        <th width="80">SL</th>
+                                        <th width="100">Đơn giá</th>
+                                        <th width="40"></th>
+                                    </tr>
+                                </thead>
+                                <tbody id="productRows">
+                                    <tr>
+                                        <td>
+                                            <select name="product_id[]" class="form-select form-select-sm" onchange="fillSellPrice(this)" required>
+                                                <option value="">-- Chọn SP --</option>
+                                                @foreach($products as $p)
+                                                <option value="{{ $p->id }}" data-price="{{ $p->sell_price }}">{{ $p->code }} - {{ $p->name }}</option>
+                                                @endforeach
+                                            </select>
+                                        </td>
+                                        <td><input type="number" name="quantity[]" class="form-control form-control-sm" min="1" value="1" required></td>
+                                        <td><input type="number" name="unit_price[]" class="form-control form-control-sm" min="0" value="0" required></td>
+                                        <td><button type="button" class="btn btn-sm btn-danger" onclick="removeRow(this)"><i class="bi bi-trash"></i></button></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <button type="button" class="btn btn-outline-primary btn-sm mb-3" onclick="addRow()"><i class="bi bi-plus"></i> Thêm dòng</button>
+                            
+                            <div class="d-flex justify-content-end gap-2">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                                <button type="submit" class="btn btn-primary">Lưu</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Tab import Excel -->
+                    <div class="tab-pane fade" id="tabImport">
+                        <form action="{{ route('stock-out.import') }}" method="POST" enctype="multipart/form-data">
+                            @csrf
+                            <div class="alert alert-info py-2 mb-3">
+                                <i class="bi bi-info-circle me-1"></i> 
+                                <a href="{{ route('stock-out.template') }}" class="alert-link">Tải file mẫu Excel</a> để xem cấu trúc dữ liệu cần nhập.
+                            </div>
+                            
+                            <div class="row mb-3">
+                                <div class="col-md-4 mb-2">
+                                    <label class="form-label">Kho xuất *</label>
+                                    <select name="warehouse_id" class="form-select" required>
+                                        @foreach($warehouses as $wh)
+                                        <option value="{{ $wh->id }}">{{ $wh->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="col-md-4 mb-2">
+                                    <label class="form-label">Khách hàng</label>
+                                    <input type="text" name="customer_name" class="form-control">
+                                </div>
+                                <div class="col-md-4 mb-2">
+                                    <label class="form-label">Ghi chú</label>
+                                    <input type="text" name="note" class="form-control" placeholder="Import từ Excel">
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label class="form-label">File Excel *</label>
+                                <input type="file" name="file" class="form-control" accept=".xlsx,.xls" required>
+                                <small class="text-muted">Chấp nhận file .xlsx, .xls</small>
+                            </div>
+                            
+                            <div class="card bg-light mb-3">
+                                <div class="card-body py-2">
+                                    <strong>Cấu trúc file Excel:</strong>
+                                    <table class="table table-sm table-bordered mt-2 mb-0">
+                                        <thead><tr><th>ma_sp</th><th>so_luong</th><th>don_gia</th><th>serial</th></tr></thead>
+                                        <tbody><tr><td>SP000001</td><td>10</td><td>60000</td><td>SN001</td></tr></tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            
+                            <div class="d-flex justify-content-end gap-2">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                                <button type="submit" class="btn btn-success"><i class="bi bi-upload me-1"></i>Import</button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
-                <div class="modal-footer py-2">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
-                    <button type="submit" class="btn btn-primary">Lưu</button>
-                </div>
-            </form>
+            </div>
         </div>
     </div>
 </div>
@@ -177,39 +245,20 @@
 @push('scripts')
 <script>
 $(document).ready(function() {
-    $('#filterWarehouse').on('change', function() {
-        dataTable.column(2).search(this.value).draw();
-    });
-    $('#filterStatus').on('change', function() {
-        dataTable.column(6).search(this.value).draw();
-    });
-    $('#searchInput').on('keyup', function() {
-        dataTable.search(this.value).draw();
-    });
+    $('#filterWarehouse').on('change', function() { dataTable.column(2).search(this.value).draw(); });
+    $('#filterStatus').on('change', function() { dataTable.column(6).search(this.value).draw(); });
+    $('#searchInput').on('keyup', function() { dataTable.search(this.value).draw(); });
 });
 function resetFilters() {
-    $('#filterWarehouse').val('');
-    $('#filterStatus').val('');
-    $('#searchInput').val('');
+    $('#filterWarehouse, #filterStatus, #searchInput').val('');
     dataTable.search('').columns().search('').draw();
 }
-
 const productOptions = `<option value="">-- Chọn SP --</option>@foreach($products as $p)<option value="{{ $p->id }}" data-price="{{ $p->sell_price }}">{{ $p->code }} - {{ $p->name }}</option>@endforeach`;
 function addRow() {
-    const row = `<tr>
-        <td><select name="product_id[]" class="form-select form-select-sm" onchange="fillSellPrice(this)" required>${productOptions}</select></td>
-        <td><input type="number" name="quantity[]" class="form-control form-control-sm" min="1" value="1" required></td>
-        <td><input type="number" name="unit_price[]" class="form-control form-control-sm" min="0" value="0" required></td>
-        <td><button type="button" class="btn btn-sm btn-danger" onclick="removeRow(this)"><i class="bi bi-trash"></i></button></td>
-    </tr>`;
+    const row = `<tr><td><select name="product_id[]" class="form-select form-select-sm" onchange="fillSellPrice(this)" required>${productOptions}</select></td><td><input type="number" name="quantity[]" class="form-control form-control-sm" min="1" value="1" required></td><td><input type="number" name="unit_price[]" class="form-control form-control-sm" min="0" value="0" required></td><td><button type="button" class="btn btn-sm btn-danger" onclick="removeRow(this)"><i class="bi bi-trash"></i></button></td></tr>`;
     document.getElementById('productRows').insertAdjacentHTML('beforeend', row);
 }
-function removeRow(btn) {
-    if (document.querySelectorAll('#productRows tr').length > 1) btn.closest('tr').remove();
-}
-function fillSellPrice(select) {
-    const price = select.options[select.selectedIndex].dataset.price || 0;
-    select.closest('tr').querySelector('input[name="unit_price[]"]').value = price;
-}
+function removeRow(btn) { if (document.querySelectorAll('#productRows tr').length > 1) btn.closest('tr').remove(); }
+function fillSellPrice(select) { select.closest('tr').querySelector('input[name="unit_price[]"]').value = select.options[select.selectedIndex].dataset.price || 0; }
 </script>
 @endpush

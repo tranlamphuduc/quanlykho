@@ -6,6 +6,8 @@ use App\Models\StockOut;
 use App\Models\Product;
 use App\Models\Warehouse;
 use App\Exports\StockOutExport;
+use App\Exports\StockOutTemplateExport;
+use App\Imports\StockOutImport;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -216,5 +218,54 @@ class StockOutController extends Controller
         $stockOut->load(['warehouse', 'user', 'approver', 'details.product']);
         $pdf = Pdf::loadView('stock-out.pdf', compact('stockOut'));
         return $pdf->download('phieu-xuat-' . $stockOut->code . '.pdf');
+    }
+
+    public function downloadTemplate()
+    {
+        return Excel::download(new StockOutTemplateExport, 'mau-xuat-kho.xlsx');
+    }
+
+    public function import(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|mimes:xlsx,xls',
+            'warehouse_id' => 'required|exists:warehouses,id',
+        ]);
+
+        try {
+            $import = new StockOutImport;
+            Excel::import($import, $request->file('file'));
+
+            if ($import->hasErrors()) {
+                return back()->with('error', 'Lỗi import: ' . implode(', ', $import->getErrors()))->withInput();
+            }
+
+            if (empty($import->getData())) {
+                return back()->with('error', 'File không có dữ liệu hợp lệ!')->withInput();
+            }
+
+            $data = [
+                'code' => StockOut::generateCode(),
+                'warehouse_id' => $request->warehouse_id,
+                'user_id' => auth()->id(),
+                'customer_name' => $request->customer_name,
+                'note' => $request->note ?? 'Import từ Excel',
+            ];
+
+            $details = [];
+            foreach ($import->getData() as $row) {
+                $details[] = [
+                    'product_id' => $row['product_id'],
+                    'quantity' => $row['quantity'],
+                    'unit_price' => $row['unit_price'],
+                    'serial_number' => $row['serial_number'],
+                ];
+            }
+
+            StockOut::createWithDetails($data, $details);
+            return redirect()->route('stock-out.index')->with('success', 'Import thành công! Đã tạo phiếu xuất với ' . count($details) . ' sản phẩm.');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Lỗi: ' . $e->getMessage())->withInput();
+        }
     }
 }

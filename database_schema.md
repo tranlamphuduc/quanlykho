@@ -190,7 +190,9 @@
 | user_id | BIGINT | FK → users(id) | Người tạo phiếu |
 | total_amount | DECIMAL(15,2) | DEFAULT 0 | Tổng tiền |
 | note | TEXT | NULLABLE | Ghi chú |
-| status | ENUM | DEFAULT 'completed' | Trạng thái: pending, completed, cancelled |
+| status | ENUM | DEFAULT 'pending' | Trạng thái: pending, completed, cancelled |
+| approved_by | BIGINT | FK → users(id), NULLABLE | Người duyệt phiếu |
+| approved_at | TIMESTAMP | NULLABLE | Thời gian duyệt |
 | created_at | TIMESTAMP | | Ngày tạo |
 | updated_at | TIMESTAMP | | Ngày cập nhật |
 
@@ -224,7 +226,9 @@
 | customer_name | VARCHAR(150) | NULLABLE | Tên khách hàng |
 | total_amount | DECIMAL(15,2) | DEFAULT 0 | Tổng tiền |
 | note | TEXT | NULLABLE | Ghi chú |
-| status | ENUM | DEFAULT 'completed' | Trạng thái |
+| status | ENUM | DEFAULT 'pending' | Trạng thái: pending, completed, cancelled |
+| approved_by | BIGINT | FK → users(id), NULLABLE | Người duyệt phiếu |
+| approved_at | TIMESTAMP | NULLABLE | Thời gian duyệt |
 | created_at | TIMESTAMP | | Ngày tạo |
 | updated_at | TIMESTAMP | | Ngày cập nhật |
 

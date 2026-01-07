@@ -76,8 +76,8 @@ Route::middleware(['admin'])->group(function () {
 | `CategoryController` | CRUD danh mục |
 | `SupplierController` | CRUD nhà cung cấp |
 | `WarehouseController` | CRUD kho hàng |
-| `StockInController` | Tạo phiếu nhập, cập nhật tồn kho |
-| `StockOutController` | Tạo phiếu xuất, trừ tồn kho |
+| `StockInController` | Tạo/Sửa/Xóa/Duyệt/Hủy phiếu nhập, Import Excel |
+| `StockOutController` | Tạo/Sửa/Xóa/Duyệt/Hủy phiếu xuất, Import Excel |
 | `InventoryController` | Báo cáo tồn kho, xuất PDF/Excel |
 | `UserController` | Quản lý người dùng (Admin) |
 | `QRCodeController` | Tạo mã QR cho sản phẩm |
@@ -287,7 +287,7 @@ public function store(Request $request)
 
 | Package | Chức năng |
 |---------|-----------|
-| `maatwebsite/excel` | Xuất file Excel |
+| `maatwebsite/excel` | Xuất/Nhập file Excel |
 | `barryvdh/laravel-dompdf` | Xuất file PDF |
 | `simplesoftwareio/simple-qrcode` | Tạo mã QR |
 
@@ -309,6 +309,36 @@ class InventoryExport implements FromCollection, WithHeadings
 
 // Controller
 return Excel::download(new InventoryExport, 'tonkho.xlsx');
+```
+
+**Ví dụ Import Excel:**
+```php
+// app/Imports/StockInImport.php
+class StockInImport implements ToArray, WithHeadingRow
+{
+    public array $data = [];
+    public array $errors = [];
+
+    public function array(array $rows): void
+    {
+        foreach ($rows as $index => $row) {
+            $product = Product::where('code', $row['ma_sp'])->first();
+            if (!$product) {
+                $this->errors[] = "Mã SP không tồn tại";
+                continue;
+            }
+            $this->data[] = [
+                'product_id' => $product->id,
+                'quantity' => $row['so_luong'],
+                'unit_price' => $row['don_gia'],
+            ];
+        }
+    }
+}
+
+// Controller
+$import = new StockInImport;
+Excel::import($import, $request->file('file'));
 ```
 
 ---

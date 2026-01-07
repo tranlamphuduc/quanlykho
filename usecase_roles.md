@@ -89,8 +89,18 @@
 | **Quản lý kho** | ✅ CRUD | ✅ CRUD | 👁️ Xem |
 | **Quản lý sản phẩm** | ✅ CRUD | ✅ CRUD | 👁️ Xem |
 | **Tạo mã QR** | ✅ | ✅ | ❌ |
-| **Nhập kho** | ✅ | ✅ | ❌ |
-| **Xuất kho** | ✅ | ✅ | ❌ |
+| **Tạo phiếu nhập kho** | ✅ | ✅ | ❌ |
+| **Sửa phiếu nhập (pending)** | ✅ | ✅ (phiếu của mình) | ❌ |
+| **Xóa phiếu nhập (pending)** | ✅ | ✅ (phiếu của mình) | ❌ |
+| **Duyệt phiếu nhập** | ✅ | ❌ | ❌ |
+| **Hủy phiếu nhập** | ✅ | ❌ | ❌ |
+| **Import Excel nhập kho** | ✅ | ✅ | ❌ |
+| **Tạo phiếu xuất kho** | ✅ | ✅ | ❌ |
+| **Sửa phiếu xuất (pending)** | ✅ | ✅ (phiếu của mình) | ❌ |
+| **Xóa phiếu xuất (pending)** | ✅ | ✅ (phiếu của mình) | ❌ |
+| **Duyệt phiếu xuất** | ✅ | ❌ | ❌ |
+| **Hủy phiếu xuất** | ✅ | ❌ | ❌ |
+| **Import Excel xuất kho** | ✅ | ✅ | ❌ |
 | **Xem tồn kho** | ✅ | ✅ | ✅ |
 | **Xuất báo cáo** | ✅ | ✅ | ❌ |
 | **Xem báo cáo** | ✅ | ✅ | ✅ |
@@ -222,25 +232,81 @@
 - **Luồng chính:**
   1. Chọn kho nhập
   2. Chọn nhà cung cấp (tùy chọn)
-  3. Thêm sản phẩm: chọn SP, nhập số lượng, đơn giá
+  3. Thêm sản phẩm: chọn SP, nhập số lượng, đơn giá (hoặc Import Excel)
   4. Nhập ghi chú (tùy chọn)
   5. Nhấn "Lưu"
-  6. Hệ thống tạo phiếu và cập nhật tồn kho
+  6. Hệ thống tạo phiếu với trạng thái **pending** (chờ duyệt)
+- **Hậu điều kiện:** Phiếu được tạo, chờ Admin duyệt
+
+### UC11a: Import Excel phiếu nhập
+- **Actor:** Admin, Thủ kho
+- **Mô tả:** Tạo phiếu nhập từ file Excel
+- **Luồng chính:**
+  1. Tải file mẫu Excel
+  2. Điền dữ liệu: mã SP, số lượng, đơn giá, số lô, hạn SD, serial
+  3. Upload file Excel
+  4. Hệ thống validate và tạo phiếu
+
+### UC11b: Duyệt phiếu nhập
+- **Actor:** Admin
+- **Mô tả:** Duyệt phiếu nhập để cập nhật tồn kho
+- **Tiền điều kiện:** Phiếu có trạng thái pending
+- **Luồng chính:**
+  1. Admin xem danh sách phiếu pending
+  2. Nhấn nút "Duyệt"
+  3. Hệ thống cập nhật tồn kho, đổi trạng thái thành completed
 - **Hậu điều kiện:** Tồn kho được cộng thêm
+
+### UC11c: Hủy phiếu nhập
+- **Actor:** Admin
+- **Mô tả:** Hủy phiếu nhập đã hoàn thành
+- **Tiền điều kiện:** Phiếu có trạng thái completed
+- **Luồng chính:**
+  1. Admin nhấn nút "Hủy phiếu"
+  2. Hệ thống hoàn trả tồn kho, đổi trạng thái thành cancelled
+- **Hậu điều kiện:** Tồn kho được trừ đi (hoàn trả)
 
 ### UC14: Tạo phiếu xuất kho
 - **Actor:** Admin, Thủ kho
 - **Mô tả:** Tạo phiếu xuất hàng cho khách
-- **Tiền điều kiện:** Đã đăng nhập, có hàng trong kho
+- **Tiền điều kiện:** Đã đăng nhập
 - **Luồng chính:**
   1. Chọn kho xuất
   2. Nhập tên khách hàng (tùy chọn)
-  3. Thêm sản phẩm: chọn SP, nhập số lượng, đơn giá
+  3. Thêm sản phẩm: chọn SP, nhập số lượng, đơn giá (hoặc Import Excel)
   4. Nhập ghi chú (tùy chọn)
   5. Nhấn "Lưu"
-  6. Hệ thống kiểm tra tồn kho, tạo phiếu và trừ tồn
+  6. Hệ thống tạo phiếu với trạng thái **pending** (chờ duyệt)
+- **Hậu điều kiện:** Phiếu được tạo, chờ Admin duyệt
+
+### UC14a: Import Excel phiếu xuất
+- **Actor:** Admin, Thủ kho
+- **Mô tả:** Tạo phiếu xuất từ file Excel
+- **Luồng chính:**
+  1. Tải file mẫu Excel
+  2. Điền dữ liệu: mã SP, số lượng, đơn giá, serial
+  3. Upload file Excel
+  4. Hệ thống validate và tạo phiếu
+
+### UC14b: Duyệt phiếu xuất
+- **Actor:** Admin
+- **Mô tả:** Duyệt phiếu xuất để trừ tồn kho
+- **Tiền điều kiện:** Phiếu có trạng thái pending, đủ tồn kho
+- **Luồng chính:**
+  1. Admin xem danh sách phiếu pending
+  2. Nhấn nút "Duyệt"
+  3. Hệ thống kiểm tra tồn kho, trừ tồn, đổi trạng thái thành completed
 - **Luồng ngoại lệ:** Không đủ tồn kho → Báo lỗi
 - **Hậu điều kiện:** Tồn kho được trừ đi
+
+### UC14c: Hủy phiếu xuất
+- **Actor:** Admin
+- **Mô tả:** Hủy phiếu xuất đã hoàn thành
+- **Tiền điều kiện:** Phiếu có trạng thái completed
+- **Luồng chính:**
+  1. Admin nhấn nút "Hủy phiếu"
+  2. Hệ thống hoàn trả tồn kho, đổi trạng thái thành cancelled
+- **Hậu điều kiện:** Tồn kho được cộng lại (hoàn trả)
 
 ### UC17: Xem báo cáo tồn kho
 - **Actor:** Admin, Thủ kho, Sales

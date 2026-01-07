@@ -29,6 +29,22 @@
                     <tr><th>Khách hàng:</th><td>{{ $stockOut->customer_name ?? 'N/A' }}</td></tr>
                     <tr><th>Người tạo:</th><td>{{ $stockOut->user->name }}</td></tr>
                     <tr><th>Ngày tạo:</th><td>{{ $stockOut->created_at->format('d/m/Y H:i') }}</td></tr>
+                    <tr>
+                        <th>Trạng thái:</th>
+                        <td>
+                            @if($stockOut->status === 'pending')
+                                <span class="badge bg-warning text-dark">Chờ duyệt</span>
+                            @elseif($stockOut->status === 'completed')
+                                <span class="badge bg-success">Hoàn thành</span>
+                            @else
+                                <span class="badge bg-danger">Đã hủy</span>
+                            @endif
+                        </td>
+                    </tr>
+                    @if($stockOut->approver)
+                    <tr><th>Người duyệt:</th><td>{{ $stockOut->approver->name }}</td></tr>
+                    <tr><th>Ngày duyệt:</th><td>{{ $stockOut->approved_at->format('d/m/Y H:i') }}</td></tr>
+                    @endif
                     <tr><th>Ghi chú:</th><td>{{ $stockOut->note ?? 'Không có' }}</td></tr>
                     <tr><th>Tổng tiền:</th><td><strong class="text-success fs-5">{{ number_format($stockOut->total_amount, 0, ',', '.') }}đ</strong></td></tr>
                 </table>

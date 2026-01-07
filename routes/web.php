@@ -44,6 +44,11 @@ Route::middleware(['auth'])->group(function () {
     Route::get('stock-in', [StockInController::class, 'index'])->name('stock-in.index');
     Route::post('stock-in', [StockInController::class, 'store'])->name('stock-in.store');
     Route::get('stock-in/{stockIn}', [StockInController::class, 'show'])->name('stock-in.show');
+    Route::get('stock-in/{stockIn}/edit', [StockInController::class, 'edit'])->name('stock-in.edit');
+    Route::put('stock-in/{stockIn}', [StockInController::class, 'update'])->name('stock-in.update');
+    Route::delete('stock-in/{stockIn}', [StockInController::class, 'destroy'])->name('stock-in.destroy');
+    Route::post('stock-in/{stockIn}/approve', [StockInController::class, 'approve'])->name('stock-in.approve');
+    Route::post('stock-in/{stockIn}/cancel', [StockInController::class, 'cancel'])->name('stock-in.cancel');
     Route::get('stock-in/{stockIn}/export-excel', [StockInController::class, 'exportExcel'])->name('stock-in.export.excel');
     Route::get('stock-in/{stockIn}/export-pdf', [StockInController::class, 'exportPdf'])->name('stock-in.export.pdf');
     
@@ -51,6 +56,11 @@ Route::middleware(['auth'])->group(function () {
     Route::get('stock-out', [StockOutController::class, 'index'])->name('stock-out.index');
     Route::post('stock-out', [StockOutController::class, 'store'])->name('stock-out.store');
     Route::get('stock-out/{stockOut}', [StockOutController::class, 'show'])->name('stock-out.show');
+    Route::get('stock-out/{stockOut}/edit', [StockOutController::class, 'edit'])->name('stock-out.edit');
+    Route::put('stock-out/{stockOut}', [StockOutController::class, 'update'])->name('stock-out.update');
+    Route::delete('stock-out/{stockOut}', [StockOutController::class, 'destroy'])->name('stock-out.destroy');
+    Route::post('stock-out/{stockOut}/approve', [StockOutController::class, 'approve'])->name('stock-out.approve');
+    Route::post('stock-out/{stockOut}/cancel', [StockOutController::class, 'cancel'])->name('stock-out.cancel');
     Route::get('stock-out/{stockOut}/export-excel', [StockOutController::class, 'exportExcel'])->name('stock-out.export.excel');
     Route::get('stock-out/{stockOut}/export-pdf', [StockOutController::class, 'exportPdf'])->name('stock-out.export.pdf');
     

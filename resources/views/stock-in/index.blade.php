@@ -13,6 +13,12 @@
         <option value="{{ $wh->name }}">{{ $wh->name }}</option>
         @endforeach
     </select>
+    <select id="filterStatus" class="form-select">
+        <option value="">Tất cả trạng thái</option>
+        <option value="Chờ duyệt">Chờ duyệt</option>
+        <option value="Hoàn thành">Hoàn thành</option>
+        <option value="Đã hủy">Đã hủy</option>
+    </select>
     <input type="text" id="searchInput" class="form-control" placeholder="Tìm mã phiếu..." style="max-width:180px;">
     <button class="btn btn-outline-secondary" onclick="resetFilters()" title="Reset bộ lọc">
         <i class="bi bi-arrow-counterclockwise"></i>
@@ -34,8 +40,9 @@
                         <th>NCC</th>
                         <th>Người tạo</th>
                         <th>Tổng tiền</th>
+                        <th>Trạng thái</th>
                         <th>Ngày</th>
-                        <th width="60">Chi tiết</th>
+                        <th width="180">Thao tác</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -47,9 +54,43 @@
                         <td>{{ $si->supplier->name ?? '-' }}</td>
                         <td>{{ $si->user->name }}</td>
                         <td><strong>{{ number_format($si->total_amount) }}đ</strong></td>
+                        <td>
+                            @if($si->status === 'pending')
+                                <span class="badge bg-warning text-dark">Chờ duyệt</span>
+                            @elseif($si->status === 'completed')
+                                <span class="badge bg-success">Hoàn thành</span>
+                            @else
+                                <span class="badge bg-danger">Đã hủy</span>
+                            @endif
+                        </td>
                         <td>{{ $si->created_at->format('d/m/Y') }}</td>
                         <td>
-                            <a href="{{ route('stock-in.show', $si) }}" class="btn btn-sm btn-outline-info"><i class="bi bi-eye"></i></a>
+                            <a href="{{ route('stock-in.show', $si) }}" class="btn btn-sm btn-outline-info" title="Xem"><i class="bi bi-eye"></i></a>
+                            
+                            @if($si->status === 'pending')
+                                @if(auth()->user()->role === 'admin')
+                                    <form action="{{ route('stock-in.approve', $si) }}" method="POST" class="d-inline" onsubmit="return confirm('Duyệt phiếu này?')">
+                                        @csrf
+                                        <button type="submit" class="btn btn-sm btn-success" title="Duyệt"><i class="bi bi-check-lg"></i></button>
+                                    </form>
+                                @endif
+                                
+                                @if(auth()->user()->role === 'admin' || $si->user_id === auth()->id())
+                                    <a href="{{ route('stock-in.edit', $si) }}" class="btn btn-sm btn-outline-warning" title="Sửa"><i class="bi bi-pencil"></i></a>
+                                    <form action="{{ route('stock-in.destroy', $si) }}" method="POST" class="d-inline" onsubmit="return confirm('Xóa phiếu này?')">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-sm btn-outline-danger" title="Xóa"><i class="bi bi-trash"></i></button>
+                                    </form>
+                                @endif
+                            @endif
+                            
+                            @if($si->status === 'completed' && auth()->user()->role === 'admin')
+                                <form action="{{ route('stock-in.cancel', $si) }}" method="POST" class="d-inline" onsubmit="return confirm('Hủy phiếu này? Tồn kho sẽ được hoàn trả.')">
+                                    @csrf
+                                    <button type="submit" class="btn btn-sm btn-outline-danger" title="Hủy phiếu"><i class="bi bi-x-lg"></i></button>
+                                </form>
+                            @endif
                         </td>
                     </tr>
                     @endforeach
@@ -70,6 +111,9 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
+                    <div class="alert alert-info py-2 mb-3">
+                        <i class="bi bi-info-circle me-1"></i> Phiếu sẽ ở trạng thái <strong>Chờ duyệt</strong>. Admin cần duyệt để cập nhật tồn kho.
+                    </div>
                     <div class="row mb-2">
                         <div class="col-md-3 mb-2">
                             <label class="form-label">Mã phiếu</label>
@@ -141,12 +185,16 @@ $(document).ready(function() {
     $('#filterWarehouse').on('change', function() {
         dataTable.column(2).search(this.value).draw();
     });
+    $('#filterStatus').on('change', function() {
+        dataTable.column(6).search(this.value).draw();
+    });
     $('#searchInput').on('keyup', function() {
         dataTable.search(this.value).draw();
     });
 });
 function resetFilters() {
     $('#filterWarehouse').val('');
+    $('#filterStatus').val('');
     $('#searchInput').val('');
     dataTable.search('').columns().search('').draw();
 }

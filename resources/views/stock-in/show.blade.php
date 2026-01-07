@@ -29,6 +29,22 @@
                     <tr><th>Nhà cung cấp:</th><td>{{ $stockIn->supplier->name ?? 'N/A' }}</td></tr>
                     <tr><th>Người tạo:</th><td>{{ $stockIn->user->name }}</td></tr>
                     <tr><th>Ngày tạo:</th><td>{{ $stockIn->created_at->format('d/m/Y H:i') }}</td></tr>
+                    <tr>
+                        <th>Trạng thái:</th>
+                        <td>
+                            @if($stockIn->status === 'pending')
+                                <span class="badge bg-warning text-dark">Chờ duyệt</span>
+                            @elseif($stockIn->status === 'completed')
+                                <span class="badge bg-success">Hoàn thành</span>
+                            @else
+                                <span class="badge bg-danger">Đã hủy</span>
+                            @endif
+                        </td>
+                    </tr>
+                    @if($stockIn->approver)
+                    <tr><th>Người duyệt:</th><td>{{ $stockIn->approver->name }}</td></tr>
+                    <tr><th>Ngày duyệt:</th><td>{{ $stockIn->approved_at->format('d/m/Y H:i') }}</td></tr>
+                    @endif
                     <tr><th>Ghi chú:</th><td>{{ $stockIn->note ?? 'Không có' }}</td></tr>
                     <tr><th>Tổng tiền:</th><td><strong class="text-primary fs-5">{{ number_format($stockIn->total_amount, 0, ',', '.') }}đ</strong></td></tr>
                 </table>

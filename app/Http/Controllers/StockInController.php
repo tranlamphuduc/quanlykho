@@ -47,7 +47,7 @@ class StockInController extends Controller
             $query->where('code', 'like', '%' . $request->search . '%');
         }
         
-        $stockIns = $query->latest()->get();
+        $stockIns = $query->orderBy('id')->get();
         $products = Product::orderBy('name')->get();
         $warehouses = Warehouse::orderBy('name')->get();
         $suppliers = Supplier::orderBy('name')->get();

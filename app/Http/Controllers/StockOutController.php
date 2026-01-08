@@ -45,7 +45,7 @@ class StockOutController extends Controller
             });
         }
         
-        $stockOuts = $query->latest()->get();
+        $stockOuts = $query->orderBy('id')->get();
         $products = Product::orderBy('name')->get();
         $warehouses = Warehouse::orderBy('name')->get();
         $newCode = StockOut::generateCode();

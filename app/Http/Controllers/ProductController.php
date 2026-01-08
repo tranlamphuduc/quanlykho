@@ -36,7 +36,7 @@ class ProductController extends Controller
             });
         }
         
-        $products = $query->latest()->get();
+        $products = $query->orderBy('id')->get();
         $categories = Category::orderBy('name')->get();
         $suppliers = Supplier::orderBy('name')->get();
         $newCode = Product::generateCode();
@@ -120,7 +120,7 @@ class ProductController extends Controller
             });
         }
         
-        $products = $query->latest()->get();
+        $products = $query->orderBy('id')->get();
         $pdf = Pdf::loadView('products.pdf', compact('products'));
         return $pdf->download('san_pham_' . date('Y-m-d_H-i-s') . '.pdf');
     }
